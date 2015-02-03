@@ -1,4 +1,4 @@
-package com.unittest.service;
+package com.unittest.db;
 
 import static org.junit.Assert.*;
 
@@ -10,9 +10,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
-
-import com.service.DataManager;
+import org.neo4j.helpers.collection.IteratorUtil;
+import com.db.DataManager;
 
 public class DataManagerTest {
 	protected GraphDatabaseService graphDb;
@@ -21,21 +20,36 @@ public class DataManagerTest {
 	public void prepareTestDatabase()
 	{
 	    //graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+		DataManager.getInstance();
 	}
 
 	@After
 	public void destroyTestDatabase()
 	{
 	    //graphDb.shutdown();
+		DataManager.getInstance().shutdown();
 	}	
 
 	@Test
 	public void nodeTest() {
+		Label userLabel = DynamicLabel.label("User");
+		String nameToFind = "Steven";
+		
+		try (Transaction tx = DataManager.getInstance().beginTx())
+		{
+		    for (Node node : DataManager.getInstance().findNodesByLabelAndProperty(userLabel, "name", nameToFind))
+		    {
+		        node.delete();
+		    }
+		    tx.success();
+		    int count = IteratorUtil.count(DataManager.getInstance().findNodesByLabelAndProperty(userLabel, "name", nameToFind));
+		    assertEquals(count, 0);
+		}
+		
         Node n = null;
         try (Transaction tx = DataManager.getInstance().beginTx())
         {
             n = DataManager.getInstance().createNode();
-            Label userLabel = DynamicLabel.label("User");
             n.addLabel(userLabel);
             n.setProperty( "name", "Steven" );
             tx.success();

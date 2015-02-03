@@ -24,48 +24,47 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <properties>
-        <jersey.version>2.15</jersey.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jersey.version>1.18.2</jersey.version>
+        <jackson.version>2.4.4</jackson.version>
         <neo4j.version>2.1.6</neo4j.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+	    <dependency>
+	    	<groupId>com.fasterxml.jackson.core</groupId>
+	    	<artifactId>jackson-databind</artifactId>
+	    	<version>${jackson.version}</version>
+	    </dependency>		
+	    <dependency>
+	        <groupId>org.neo4j</groupId>
+	        <artifactId>neo4j</artifactId>
+	        <version>${neo4j.version}</version>
+	    </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet-core</artifactId>
-            <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
-            <!-- artifactId>jersey-container-servlet</artifactId -->
+        	<groupId>org.neo4j.test</groupId>
+        	<artifactId>neo4j-harness</artifactId>
+        	<version>${neo4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>${neo4j.version}</version>
-        </dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-kernel</artifactId>
+        	<version>${neo4j.version}</version>
+        </dependency>               	    
         <dependency>
         	<groupId>junit</groupId>
         	<artifactId>junit</artifactId>
         	<version>4.12</version>
         </dependency>
         <dependency>
-        	<groupId>org.neo4j.test</groupId>
-        	<artifactId>neo4j-harness</artifactId>
-        	<version>${neo4j.version}</version>
+        	<groupId>log4j</groupId>
+        	<artifactId>log4j</artifactId>
+        	<version>1.2.17</version>
         </dependency>
-    </dependencies>
+    </dependencies>  
 </project>
