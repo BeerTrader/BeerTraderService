@@ -1,8 +1,5 @@
 package com.service;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -18,12 +15,11 @@ import java.io.IOException;
 import java.util.Collections;
 
 import com.db.DataManager;
+import com.objects.ObjectManager;
 import com.objects.User;
 
 @Path("/user")
 public class UserResource {
-
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper().setVisibility(JsonMethod.FIELD, Visibility.ANY);
 
     @GET
     @Path("/{name}")
@@ -35,10 +31,9 @@ public class UserResource {
 		    for (Node node : DataManager.getInstance().findNodesByLabelAndProperty(userLabel, "name", name))
 		    {
 		    	User u = new User(node.getId(),(String) node.getProperty("name"));
-		    	return OBJECT_MAPPER.writeValueAsString(u);
-		    	//OBJECT_MAPPER.
+		    	return ObjectManager.getInstance().writeValueAsString(u);
 		    }
 		}
-        return OBJECT_MAPPER.writeValueAsString(Collections.emptyMap());
+        return ObjectManager.getInstance().writeValueAsString(Collections.emptyMap());
     }
 }

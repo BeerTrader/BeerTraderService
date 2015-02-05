@@ -1,12 +1,12 @@
 package com.db;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
+//import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 public class DataManager {
 		private static GraphDatabaseService graphDb = null;
-		private static ExecutionEngine executionEngine = null;
+		//private static ExecutionEngine executionEngine = null;
 		private static DataManager dm = null;
 		private static final String DB_PATH = "C:\\Users\\steven.muschler\\Documents\\Neo4j\\default.graphdb";
 		
@@ -15,7 +15,7 @@ public class DataManager {
 	        try
 	        {
 	        	graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
-	        	executionEngine = new ExecutionEngine(graphDb);
+	        	//executionEngine = new ExecutionEngine(graphDb);
 	        	registerShutdownHook( graphDb );
 	        	System.out.println("Graph Database Initialized.");
 	        }
@@ -48,11 +48,11 @@ public class DataManager {
 	    {
 	        return graphDb;
 	    }
-	    
+	    /*
 	    private ExecutionEngine getExecutionEngine() {
 	    	return executionEngine;
 	    }
-	    
+	    */
 	    private static void registerShutdownHook( final GraphDatabaseService graphDb )
 	    {
 	        // Registers a shutdown hook for the Neo4j instance so that it
