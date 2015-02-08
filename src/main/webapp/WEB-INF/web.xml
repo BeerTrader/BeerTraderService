@@ -7,16 +7,29 @@
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.service</param-value>
+      <param-value>com</param-value>
     </init-param>
 	<init-param>
 		<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
 		<param-value>true</param-value>
+	</init-param>
+	<init-param>
+    	<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+    	<param-value>com.auth.AuthFilter</param-value>
 	</init-param>    
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>Jersey Web Application</servlet-name>
     <url-pattern>/rest/*</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping>
+  <security-constraint>
+	<web-resource-collection>
+		<web-resource-name>Entire Application</web-resource-name>
+		<url-pattern>/*</url-pattern>
+	</web-resource-collection>
+	<user-data-constraint>
+		<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+	</user-data-constraint>
+  </security-constraint>  
 </web-app>
