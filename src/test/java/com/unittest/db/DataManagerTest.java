@@ -11,6 +11,8 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
+import org.neo4j.test.TestGraphDatabaseFactory;
+
 import com.db.DataManager;
 
 public class DataManagerTest {
@@ -19,15 +21,15 @@ public class DataManagerTest {
 	@Before
 	public void prepareTestDatabase()
 	{
-	    //graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-		DataManager.getInstance();
+	    graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+		//DataManager.getInstance();
 	}
 
 	@After
 	public void destroyTestDatabase()
 	{
-	    //graphDb.shutdown();
-		DataManager.getInstance().shutdown();
+	    graphDb.shutdown();
+		//DataManager.getInstance().shutdown();
 	}	
 
 	@Test
