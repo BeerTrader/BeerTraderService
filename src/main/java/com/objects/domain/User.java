@@ -1,4 +1,4 @@
-package com.objects;
+package com.objects.domain;
 
 public class User {
 	private long id;
@@ -6,13 +6,20 @@ public class User {
 	private String password;
  
 	public User() {
-		super();
 	}
 	
 	public User(long id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+	}
+	
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public String getPassword() {
+		return this.password;
 	}
  
 	@Override

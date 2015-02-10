@@ -7,8 +7,9 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import com.exceptions.DuplicateUserException;
 import com.exceptions.UserNotFoundException;
-import com.objects.User;
+import com.objects.domain.User;
 
 public class UserDB {
 	private static Label userLabel = DynamicLabel.label("User");
@@ -40,8 +41,16 @@ public class UserDB {
 		}
 	}
 	
-	public static void registerUser() {
+	public static void registerUser(String username, String password) throws DuplicateUserException {
+		if (UserDB.userExists(username))
+			throw new DuplicateUserException(username);
 		
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			Node newUserNode = DataManager.getInstance().createNode(userLabel);
+			newUserNode.setProperty("username", username);
+			newUserNode.setProperty("password", password);
+			tx.success();
+		}
 	}
 
 }
