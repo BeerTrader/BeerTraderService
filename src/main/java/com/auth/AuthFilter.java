@@ -3,6 +3,9 @@ package com.auth;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import com.db.UserDB;
+import com.exceptions.UserNotAuthorizedException;
+import com.objects.domain.User;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
@@ -18,16 +21,13 @@ public class AuthFilter implements ContainerRequestFilter {
      */
     @Override
     public ContainerRequest filter(ContainerRequest containerRequest) throws WebApplicationException {
-        //GET, POST, PUT, DELETE, ...
     	System.out.println("Authenticating...");
         String method = containerRequest.getMethod();
-        // myresource/get/56bCA for example
         String path = containerRequest.getPath(true);
- 
-        //We do allow wadl to be retrieve
-        //if(method.equals("GET") && (path.equals("application.wadl") || path.equals("application.wadl/xsd0.xsd")){
-        //    return containerRequest;
-        //}
+       
+        //Allow users to register without authentication
+        if (method.equals("POST")&&path.contains("createUser"))
+        	return containerRequest;
  
         //Get the authentification passed in HTTP headers parameters
         String auth = containerRequest.getHeaderValue("authorization");
@@ -45,13 +45,13 @@ public class AuthFilter implements ContainerRequestFilter {
             throw new WebApplicationException(Status.UNAUTHORIZED);
         }
  
-        //DO YOUR DATABASE CHECK HERE (replace that line behind)...
-        //User authentificationResult =  AuthentificationThirdParty.authentification(lap[0], lap[1]);
- 
-        //Our system refuse login and password
-        //if(authentificationResult == null){
-        //    throw new WebApplicationException(Status.UNAUTHORIZED);
-        //}
+        User authorizedUser;
+        try {
+        	authorizedUser = UserDB.authenticateUser(lap[0], lap[1]);
+        }
+        catch (UserNotAuthorizedException e) {
+        	throw new WebApplicationException(Status.UNAUTHORIZED);
+        }
  
         //TODO : HERE YOU SHOULD ADD PARAMETER TO REQUEST, TO REMEMBER USER ON YOUR REST SERVICE...
  

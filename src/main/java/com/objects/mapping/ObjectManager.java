@@ -3,12 +3,10 @@ package com.objects.mapping;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import com.exceptions.ObjectMappingException;
 import com.objects.domain.User;
 
@@ -35,7 +33,7 @@ public class ObjectManager {
 		}
 	}
 	
-	public static <T> User readUserAsString(String input) throws ObjectMappingException {
+	public static User readUserAsString(String input) throws ObjectMappingException {
 		
 		try {
 			return ObjectManager.getInstance().readValue(input, User.class);

@@ -8,6 +8,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import com.exceptions.DuplicateUserException;
+import com.exceptions.UserNotAuthorizedException;
 import com.exceptions.UserNotFoundException;
 import com.objects.domain.User;
 
@@ -41,6 +42,23 @@ public class UserDB {
 		}
 	}
 	
+	public static User authenticateUser(String username, String password) throws UserNotAuthorizedException {
+		User authorizedUser;
+		try {
+			authorizedUser = UserDB.getUser(username);
+		}
+		catch (UserNotFoundException e) {
+			throw new UserNotAuthorizedException(username);
+		}
+		
+		if (StringUtils.equals(authorizedUser.getPassword(), password)) {
+			return authorizedUser;
+		}
+		else {
+			throw new UserNotAuthorizedException(username);
+		}
+	}	
+	
 	public static void registerUser(String username, String password) throws DuplicateUserException {
 		if (UserDB.userExists(username))
 			throw new DuplicateUserException(username);
@@ -52,5 +70,4 @@ public class UserDB {
 			tx.success();
 		}
 	}
-
 }
