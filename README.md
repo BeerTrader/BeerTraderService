@@ -12,8 +12,8 @@ The server component is composed of the following technologies:
 4. Jackson (https://github.com/FasterXML/jackson)
 
 ## Contributors
-Michael Goode-Project Manager
-Steven Muschler-Architect
-Jim Gurgone
-Jase Kurasz
-Jimmy Kurian
+* Michael Goode-Project Manager
+* Steven Muschler-Architect
+* Jim Gurgone
+* Jase Kurasz
+* Jimmy Kurian
