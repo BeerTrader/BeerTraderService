@@ -5,13 +5,20 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.Produces;
 
+import com.auth.BasicAuth;
+import com.auth.BasicTokenGenerator;
+import com.auth.TokenManager;
 import com.db.UserDB;
 import com.exceptions.DuplicateUserException;
 import com.exceptions.ObjectMappingException;
+import com.exceptions.UserNotAuthorizedException;
 import com.exceptions.UserNotFoundException;
 import com.objects.domain.User;
 import com.objects.mapping.ObjectManager;
@@ -19,6 +26,7 @@ import com.objects.mapping.ObjectManager;
 @Path("/user")
 public class UserResource {
 	//curl -k --user test:test https://localhost:8443/beertrader/rest/user/Steven
+	//curl -k -H "Authorization: dGVzdGluZw==" https://localhost:8443/beertrader/rest/user/Steven
     @GET
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,5 +57,32 @@ public class UserResource {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }
+    }
+    
+    //curl -k --user musch711:testing123 https://localhost:8443/beertrader/rest/user/login
+    @GET
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response login(@Context HttpHeaders headers) {
+    	String auth = headers.getRequestHeaders().getFirst("authorization");
+        String[] lap = BasicAuth.decode(auth);
+   	 
+        //If login or password fail
+        if(lap == null || lap.length != 2){
+	    	return Response.status(400).entity(Status.UNAUTHORIZED).build();
+        }
+ 
+        User authorizedUser;
+        try {
+        	authorizedUser = UserDB.authenticateUser(lap[0], lap[1]);
+        	String token = BasicTokenGenerator.getNewToken(authorizedUser.getUsername());
+        	token = BasicAuth.encodeToken(token);
+	        TokenManager.addToken(token, authorizedUser);
+	        return Response.status(200).entity(token).build();
+        }
+        catch (UserNotAuthorizedException e) {
+	    	System.out.println(e.getMessage());
+	    	return Response.status(400).entity(e.getMessage()).build();
+        }
     }
 }
