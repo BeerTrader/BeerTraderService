@@ -13,8 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.Produces;
 
 import com.auth.BasicAuth;
-import com.auth.BasicTokenGenerator;
-import com.auth.TokenManager;
+import com.auth.token.TokenManager;
 import com.db.UserDB;
 import com.exceptions.DuplicateUserException;
 import com.exceptions.ObjectMappingException;
@@ -75,8 +74,10 @@ public class UserResource {
         User authorizedUser;
         try {
         	authorizedUser = UserDB.authenticateUser(lap[0], lap[1]);
-        	String token = BasicTokenGenerator.getNewToken(authorizedUser.getUsername());
+        	String token = TokenManager.getNewToken(authorizedUser.getUsername());
+        	System.out.println("New Token: " + token);
         	token = BasicAuth.encodeToken(token);
+        	System.out.println("New Encoded Token: " + token);
 	        TokenManager.addToken(token, authorizedUser);
 	        return Response.status(200).entity(token).build();
         }

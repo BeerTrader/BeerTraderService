@@ -34,18 +34,10 @@ public class BasicAuth {
     }
     
     public static String decodeToken(String auth) {
-    	//auth = auth.replaceFirst("Bearer ", "");
-    	
-    	byte[] decodedBytes = DatatypeConverter.parseBase64Binary(auth);
-        
-    	if(decodedBytes == null || decodedBytes.length == 0){
-            return null;
-        }
-    	
-    	return new String(decodedBytes);
+    	return Base64.base64Decode(auth);
     }
     
     public static String encodeToken(String token) {
-    	return Base64.encode(token).toString();
+    	return new String(Base64.encode(token));
     }
 }

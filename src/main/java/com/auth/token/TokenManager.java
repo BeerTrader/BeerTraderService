@@ -1,4 +1,4 @@
-package com.auth;
+package com.auth.token;
 
 import java.util.HashMap;
 
@@ -7,6 +7,7 @@ import com.objects.domain.User;
 public class TokenManager {
 	
 	private static HashMap<String,User> tokenCollection = new HashMap<>();
+	private static TokenGenerator tokenGenerator = new BasicTokenGenerator();
 	
 	public static void addToken(String token, User user) {
 		tokenCollection.put(token, user);
@@ -16,8 +17,11 @@ public class TokenManager {
 		return tokenCollection.containsKey(token);
 	}
 	
-	public static boolean validateToken(String token) {
-		//TODO
-		return false;
+	public static String getNewToken(String username) {
+		return tokenGenerator.getNewToken(username);
+	}
+	
+	public static boolean isTokenExpired(String token) {
+		return tokenGenerator.isTokenExpired(token);
 	}
 }

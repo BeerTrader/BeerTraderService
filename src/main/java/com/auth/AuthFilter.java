@@ -3,6 +3,7 @@ package com.auth;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import com.auth.token.TokenManager;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
@@ -21,18 +22,18 @@ public class AuthFilter implements ContainerRequestFilter {
     	System.out.println("Authenticating...");
         String method = containerRequest.getMethod();
         String path = containerRequest.getPath(true);
-       
+
         //Allow users to register without authentication
         if (method.equals("POST")&&path.contains("createUser"))
         	return containerRequest;
  
         //Get the authentification passed in HTTP headers parameters
         String auth = containerRequest.getHeaderValue("authorization");
-        System.out.println(auth);
         //If the user does not have the right (does not provide any HTTP Basic Auth)
         if(auth == null){
             throw new WebApplicationException(Status.UNAUTHORIZED);
         }
+        System.out.println("Encoded Token: " + auth);
         
         if (method.equals("GET")&&path.contains("login")) {	 
 	        return containerRequest;
@@ -41,6 +42,10 @@ public class AuthFilter implements ContainerRequestFilter {
 	        if (!TokenManager.tokenExists(auth))
 	        	throw new WebApplicationException(Status.UNAUTHORIZED);
 	        
+	        String token = BasicAuth.decodeToken(auth);
+	        System.out.println("Decoded Token: " + token);
+	        if (TokenManager.isTokenExpired(token))
+	        	throw new WebApplicationException(Status.UNAUTHORIZED);
 	        //TODO : Check if token is expired
         }
         return containerRequest;
