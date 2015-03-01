@@ -46,7 +46,6 @@ public class AuthFilter implements ContainerRequestFilter {
 	        System.out.println("Decoded Token: " + token);
 	        if (TokenManager.isTokenExpired(token))
 	        	throw new WebApplicationException(Status.UNAUTHORIZED);
-	        //TODO : Check if token is expired
         }
         return containerRequest;
     }

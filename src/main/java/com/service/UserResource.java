@@ -41,7 +41,7 @@ public class UserResource {
     	}
     }
     
-    //curl -k --user test:test -H "Content-Type: application/json" -X POST -d "{\"username\":\"blah\", \"password\":\"blob\"}" https://localhost:8443/beertrader/rest/user/createUser
+    //curl -k -H "Content-Type: application/json" -X POST -d "{\"username\":\"blah\", \"password\":\"blob\"}" https://localhost:8443/beertrader/rest/user/createUser
     @POST
     @Path("/createUser")
     @Consumes(MediaType.APPLICATION_JSON)
