@@ -2,10 +2,10 @@ package com.auth;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerRequestContext;
 
 import com.auth.token.TokenManager;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 /**
  * Jersey HTTP Basic Auth filter
@@ -18,35 +18,30 @@ public class AuthFilter implements ContainerRequestFilter {
      * @param containerRequest The request from Tomcat server
      */
     @Override
-    public ContainerRequest filter(ContainerRequest containerRequest) throws WebApplicationException {
+    public void filter(ContainerRequestContext containerRequest) throws WebApplicationException {
     	System.out.println("Authenticating...");
-        String method = containerRequest.getMethod();
-        String path = containerRequest.getPath(true);
+        //String method = containerRequest.getMethod();
+        String path = containerRequest.getUriInfo().getPath();
 
         //Allow users to register without authentication
-        if (method.equals("POST")&&path.contains("createUser"))
-        	return containerRequest;
- 
-        //Get the authentification passed in HTTP headers parameters
-        String auth = containerRequest.getHeaderValue("authorization");
-        //If the user does not have the right (does not provide any HTTP Basic Auth)
-        if(auth == null){
-            throw new WebApplicationException(Status.UNAUTHORIZED);
-        }
-        System.out.println("Encoded Token: " + auth);
-        
-        if (method.equals("GET")&&path.contains("login")) {	 
-	        return containerRequest;
-        }
-        else {
-	        if (!TokenManager.tokenExists(auth))
-	        	throw new WebApplicationException(Status.UNAUTHORIZED);
+        if (!path.contains("createUser")) {
+	        //Get the authentification passed in HTTP headers parameters
+	        String auth = containerRequest.getHeaderString("authorization");
+	        //If the user does not have the right (does not provide any HTTP Basic Auth)
+	        if(auth == null){
+	            throw new WebApplicationException(Status.UNAUTHORIZED);
+	        }
+	        System.out.println("Encoded Token: " + auth);
 	        
-	        String token = BasicAuth.decodeToken(auth);
-	        System.out.println("Decoded Token: " + token);
-	        if (TokenManager.isTokenExpired(token))
-	        	throw new WebApplicationException(Status.UNAUTHORIZED);
+	        if (!path.contains("login")) {
+		        if (!TokenManager.tokenExists(auth))
+		        	throw new WebApplicationException(Status.UNAUTHORIZED);
+		        
+		        String token = BasicAuth.decodeToken(auth);
+		        System.out.println("Decoded Token: " + token);
+		        if (TokenManager.isTokenExpired(token))
+		        	throw new WebApplicationException(Status.UNAUTHORIZED);
+	        }
         }
-        return containerRequest;
     }
 }

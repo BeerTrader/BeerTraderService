@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import com.exceptions.ObjectMappingException;
 import com.objects.domain.User;
 
@@ -33,10 +34,10 @@ public class ObjectManager {
 		}
 	}
 	
-	public static User readUserAsString(String input) throws ObjectMappingException {
+	public static Object readObjectAsString(String input, Class<?> objectClass) throws ObjectMappingException {
 		
 		try {
-			return ObjectManager.getInstance().readValue(input, User.class);
+			return ObjectManager.getInstance().readValue(input, objectClass);
 		} catch (JsonGenerationException e) {
 			throw new ObjectMappingException(e.getMessage());
 		} catch (JsonMappingException e) {

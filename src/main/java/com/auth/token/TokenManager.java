@@ -24,4 +24,8 @@ public class TokenManager {
 	public static boolean isTokenExpired(String token) {
 		return tokenGenerator.isTokenExpired(token);
 	}
+	
+	public static User getUser(String token) {
+		return tokenCollection.get(token);
+	}
 }

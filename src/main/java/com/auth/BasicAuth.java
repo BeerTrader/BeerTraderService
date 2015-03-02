@@ -2,7 +2,10 @@ package com.auth;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.sun.jersey.core.util.Base64;
+import org.glassfish.jersey.internal.util.Base64;
+
+//import com.sun.jersey.core.util.Base64;
+
 
 /**
  * Allow to encode/decode the authentification
@@ -34,10 +37,12 @@ public class BasicAuth {
     }
     
     public static String decodeToken(String auth) {
-    	return Base64.base64Decode(auth);
+    	//return Base64.base64Decode(auth);
+    	return Base64.decodeAsString(auth);
     }
     
     public static String encodeToken(String token) {
-    	return new String(Base64.encode(token));
+    	//return new String(Base64.encode(token));
+    	return Base64.encodeAsString(token);
     }
 }

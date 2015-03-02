@@ -47,7 +47,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(String user) {
     	try {
-			User newUser = ObjectManager.readUserAsString(user);
+			User newUser = (User) ObjectManager.readObjectAsString(user, User.class);
 			UserDB.registerUser(newUser.getUsername(), newUser.getPassword());
 			String result = "User created with username: " + newUser.getUsername();
 			return Response.status(200).entity(result).build();

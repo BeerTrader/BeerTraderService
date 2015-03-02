@@ -25,17 +25,16 @@
         </plugins>
     </build>
     <properties>
-        <jersey.version>1.18.2</jersey.version>
         <jackson.version>2.4.4</jackson.version>
         <neo4j.version>2.1.6</neo4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-bundle</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
+        <dependency>
+        	<groupId>org.glassfish.jersey.containers</groupId>
+        	<artifactId>jersey-container-servlet</artifactId>
+        	<version>2.15</version>
+        </dependency>    
 	    <dependency>
 	    	<groupId>com.fasterxml.jackson.core</groupId>
 	    	<artifactId>jackson-databind</artifactId>
@@ -50,6 +49,24 @@
         	<groupId>org.neo4j.test</groupId>
         	<artifactId>neo4j-harness</artifactId>
         	<version>${neo4j.version}</version>
+        	<exclusions>
+        		<exclusion>
+        			<artifactId>jersey-client</artifactId>
+        			<groupId>com.sun.jersey</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>jersey-core</artifactId>
+        			<groupId>com.sun.jersey</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>jersey-multipart</artifactId>
+        			<groupId>com.sun.jersey.contribs</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>jersey-server</artifactId>
+        			<groupId>com.sun.jersey</groupId>
+        		</exclusion>
+        	</exclusions>
         </dependency>
         <dependency>
         	<groupId>org.neo4j</groupId>
