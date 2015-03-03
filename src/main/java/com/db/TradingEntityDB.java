@@ -11,8 +11,9 @@ import com.factory.LabelFactory;
 public class TradingEntityDB {
 	
 	public static boolean entityExists(String name, Label label) {
-		if (StringUtils.isEmpty(name))
+		if (StringUtils.isEmpty(name)) {
 			return false;
+		}
 		
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			ResourceIterator<Node> iterable = DataManager.getInstance().findNodesByLabelAndProperty(label, "name", name).iterator();

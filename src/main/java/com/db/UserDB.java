@@ -14,8 +14,9 @@ import com.objects.domain.User;
 public class UserDB {
 	
 	public static boolean userExists(String username) {
-		if (StringUtils.isEmpty(username))
+		if (StringUtils.isEmpty(username)) {
 			return false;
+		}
 		
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			ResourceIterator<Node> iterable = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", username).iterator();
@@ -58,8 +59,9 @@ public class UserDB {
 	}	
 	
 	public static void registerUser(String username, String password) throws DuplicateUserException {
-		if (UserDB.userExists(username))
+		if (UserDB.userExists(username)) {
 			throw new DuplicateUserException(username);
+		}
 		
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Node newUserNode = DataManager.getInstance().createNode(LabelFactory.BeerLabels.USER);

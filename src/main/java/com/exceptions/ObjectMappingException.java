@@ -2,7 +2,7 @@ package com.exceptions;
 
 @SuppressWarnings("serial")
 public class ObjectMappingException extends Exception {
-	private String message;
+	private final String message;
     
     public ObjectMappingException(String s) {
         message = "Exception: error mapping string " + s;

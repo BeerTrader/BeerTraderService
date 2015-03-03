@@ -2,7 +2,7 @@ package com.exceptions;
 
 @SuppressWarnings("serial")
 public class UserNotFoundException extends Exception {
-	private String message;
+	private final String message;
     
     public UserNotFoundException(String s) {
         message = "Exception: User with username " + s + " does not exist!";

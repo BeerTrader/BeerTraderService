@@ -2,7 +2,7 @@ package com.exceptions;
 
 @SuppressWarnings("serial")
 public class UserNotAuthorizedException extends Exception {
-	private String message;
+	private final String message;
     
     public UserNotAuthorizedException(String s) {
         message = "Exception: User with username " + s + " is not authorized!";

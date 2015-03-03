@@ -40,22 +40,6 @@ public class DataManager {
 	    	}
 	    }
 	    
-	    /*
-	    public static ExecutionEngine getInstance()
-	    {
-	    	if (dm==null)
-	        {
-	        	dm = new DataManager();
-	        }
-	        return dm.getExecutionEngine();	    	
-	    }
-	    */
-
-	    /*
-	    private ExecutionEngine getExecutionEngine() {
-	    	return executionEngine;
-	    }
-	    */
 	    private static void registerShutdownHook(final GraphDatabaseService graphDb) {
 	        // Registers a shutdown hook for the Neo4j instance so that it
 	        // shuts down nicely when the VM exits (even if you "Ctrl-C" the

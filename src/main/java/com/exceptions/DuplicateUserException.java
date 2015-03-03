@@ -2,7 +2,7 @@ package com.exceptions;
 
 @SuppressWarnings("serial")
 public class DuplicateUserException extends Exception {
-	private String message;
+	private final String message;
     
     public DuplicateUserException(String s) {
         message = "Exception: User with username " + s + " already exists!";

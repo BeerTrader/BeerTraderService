@@ -27,7 +27,7 @@ public class BasicAuth {
  
         //If the decode fails in any case
         if(decodedBytes == null || decodedBytes.length == 0){
-            return null;
+            return new String[0];
         }
  
         //Now we can convert the byte[] into a splitted array :

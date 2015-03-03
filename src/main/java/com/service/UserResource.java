@@ -36,7 +36,6 @@ public class UserResource {
     		return Response.status(200).entity(result).build();
     	}
     	catch(UserNotFoundException | ObjectMappingException e) {
-    		System.out.println(e.getMessage());
     		return Response.status(400).entity(e.getMessage()).build();
     	}
     }
@@ -53,7 +52,6 @@ public class UserResource {
 			return Response.status(200).entity(result).build();
     	}
 	    catch(DuplicateUserException | ObjectMappingException e) {
-	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }
     }
@@ -75,14 +73,12 @@ public class UserResource {
         try {
         	authorizedUser = UserDB.authenticateUser(lap[0], lap[1]);
         	String token = TokenManager.getNewToken(authorizedUser.getUsername());
-        	System.out.println("New Token: " + token);
         	token = BasicAuth.encodeToken(token);
         	System.out.println("New Encoded Token: " + token);
 	        TokenManager.addToken(token, authorizedUser);
 	        return Response.status(200).entity(token).build();
         }
         catch (UserNotAuthorizedException e) {
-	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
         }
     }

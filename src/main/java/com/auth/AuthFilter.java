@@ -19,8 +19,6 @@ public class AuthFilter implements ContainerRequestFilter {
      */
     @Override
     public void filter(ContainerRequestContext containerRequest) throws WebApplicationException {
-    	System.out.println("Authenticating...");
-        //String method = containerRequest.getMethod();
         String path = containerRequest.getUriInfo().getPath();
 
         //Allow users to register without authentication
@@ -31,16 +29,16 @@ public class AuthFilter implements ContainerRequestFilter {
 	        if(auth == null){
 	            throw new WebApplicationException(Status.UNAUTHORIZED);
 	        }
-	        System.out.println("Encoded Token: " + auth);
 	        
 	        if (!path.contains("login")) {
-		        if (!TokenManager.tokenExists(auth))
+		        if (!TokenManager.tokenExists(auth)) {
 		        	throw new WebApplicationException(Status.UNAUTHORIZED);
+		        }
 		        
 		        String token = BasicAuth.decodeToken(auth);
-		        System.out.println("Decoded Token: " + token);
-		        if (TokenManager.isTokenExpired(token))
+		        if (TokenManager.isTokenExpired(token)) {
 		        	throw new WebApplicationException(Status.UNAUTHORIZED);
+		        }
 	        }
         }
     }

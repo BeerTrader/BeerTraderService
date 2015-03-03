@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import com.auth.token.TokenManager;
 import com.db.TradingEntityDB;
+import com.db.UserDB;
 import com.exceptions.ObjectMappingException;
 import com.factory.LabelFactory;
 import com.objects.domain.TradingEntity;
@@ -24,13 +25,19 @@ public class DesireableResource {
     public Response addDesireable(@Context HttpHeaders headers, String tradingEntity) {
     	String auth = headers.getRequestHeaders().getFirst("authorization");
     	User u = TokenManager.getUser(auth);
-    	System.out.println("DesireableResource: " + u.getUsername());
+    	//UserDB.getUser(u.getUsername());
     	try {
 			TradingEntity newTradingEntity = (TradingEntity) ObjectManager.readObjectAsString(tradingEntity, TradingEntity.class);
-			System.out.println("DesireableResource: " + newTradingEntity.getName());
-			//if (TradingEntityDB.entityExists("test", LabelFactory.BeerLabels.DESIREABLE)==true) {
-				//add edge
-			//}
+			if (TradingEntityDB.entityExists(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIREABLE)==true) {
+				//then related nodes must exist
+				
+			}
+			else {
+				TradingEntityDB.addTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIREABLE, LabelFactory.BeerLabels.BEER);
+			}
+			if (newTradingEntity.getRelations().size()>0) {
+				
+			}
 			
 			return Response.status(200).entity("edge").build();
     	}
