@@ -9,7 +9,7 @@ public class LabelFactory {
 	
 	public static Label getLabel(String labelName) throws LabelNotFoundException {
 		for (Label l: BeerLabels.values()) {
-			if (l.name().equals(labelName))
+			if (l.name().equalsIgnoreCase(labelName))
 				return l;
 		}
 		throw new LabelNotFoundException(labelName);

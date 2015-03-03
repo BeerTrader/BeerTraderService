@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.exceptions.ObjectMappingException;
-import com.objects.domain.User;
 
 public class ObjectManager {
 
