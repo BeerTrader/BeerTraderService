@@ -16,7 +16,7 @@ public class LabelFactoryTest {
 	
 	@Test
 	public void labelFound() {
-		Label l = LabelFactory.getLabel("DESIREABLE");
-		assertEquals("DESIREABLE",l.name());
+		Label l = LabelFactory.getLabel("DESIRABLE");
+		assertEquals("DESIRABLE",l.name());
 	}
 }
