@@ -18,7 +18,7 @@ public class AuthFilter implements ContainerRequestFilter {
      * @param containerRequest The request from Tomcat server
      */
     @Override
-    public void filter(ContainerRequestContext containerRequest) throws WebApplicationException {
+    public void filter(ContainerRequestContext containerRequest) {
         String path = containerRequest.getUriInfo().getPath();
 
         //Allow users to register without authentication

@@ -5,6 +5,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import com.auth.token.TokenManager;
 import com.exceptions.DuplicateUserException;
 import com.exceptions.UserNotAuthorizedException;
 import com.exceptions.UserNotFoundException;
@@ -40,6 +41,15 @@ public class UserDB {
 			throw new UserNotFoundException(username);
 		}
 	}
+	
+	public static Node getUserNode(String token) {
+		User u = TokenManager.getUser(token);
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			Node userNode = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", u.getUsername()).iterator().next();
+			tx.success();
+			return userNode;
+		}
+	}	
 	
 	public static User authenticateUser(String username, String password) throws UserNotAuthorizedException {
 		User authorizedUser;

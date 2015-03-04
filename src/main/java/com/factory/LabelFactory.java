@@ -2,17 +2,16 @@ package com.factory;
 
 import org.neo4j.graphdb.Label;
 
-import com.exceptions.LabelNotFoundException;
-
 public class LabelFactory {
-	public enum BeerLabels implements Label { USER, OFFERABLE, DESIREABLE, BEER, BEERTYPE, BREWERY; } 
+	public enum BeerLabels implements Label { USER, OFFERABLE, DESIRABLE, BEER, BEERTYPE, BREWERY, ERROR; } 
 	
-	public static Label getLabel(String labelName) throws LabelNotFoundException {
+	public static Label getLabel(String labelName) {
 		for (Label l: BeerLabels.values()) {
 			if (l.name().equalsIgnoreCase(labelName)) {
 				return l;
 			}
 		}
-		throw new LabelNotFoundException(labelName);
+		System.out.println("Could not find " + labelName + " in LabelFactory.  Returning ERROR label.");
+		return BeerLabels.ERROR;
 	}
 }

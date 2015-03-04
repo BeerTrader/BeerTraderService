@@ -1,18 +1,15 @@
 package com.db;
 
-//import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.factory.DatabaseFactory;
 
 public class DataManager {
 		private static GraphDatabaseService graphDb = null;
-		//private static ExecutionEngine executionEngine = null;
 		
 	    private DataManager() {
 	        try {
 	        	graphDb = DatabaseFactory.build("Prod");
-	        	//executionEngine = new ExecutionEngine(graphDb);
 	        	registerShutdownHook( graphDb );
 	        	System.out.println("Graph Database Initialized.");
 	        }
