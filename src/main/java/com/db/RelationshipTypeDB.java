@@ -1,14 +1,42 @@
 package com.db;
 
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 public class RelationshipTypeDB {
-	public static void addRelationshipBetweenNodes(Node source, Node dest, RelationshipType relation) {
+	public static boolean hasRelationship(Node source, Node destination, RelationshipType relation) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			source.createRelationshipTo(dest, relation);
-			tx.success();
+			Iterable<Relationship> relations = source.getRelationships(relation);
+			for (Relationship currentRelation: relations) {
+				if (currentRelation.getOtherNode(source).equals(destination)) {
+					return true;
+				}
+			}
+			return false;
 		}
+	}
+	
+	public static void addRelationshipBetweenNodes(Node source, Node destination, RelationshipType relation) {
+		if (hasRelationship(source,destination,relation)==false) {
+			try (Transaction tx = DataManager.getInstance().beginTx()) {
+				source.createRelationshipTo(destination, relation);
+				tx.success();
+			}
+		}
+	}
+	
+	public static void removeRelationship(Node source, Node destination, RelationshipType relation) {
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			Iterable<Relationship> relations = source.getRelationships(relation);
+			for (Relationship currentRelation: relations) {
+				System.out.println(currentRelation.getOtherNode(source) + ": " + destination.getId());
+				if (currentRelation.getOtherNode(source).equals(destination)) {
+					currentRelation.delete();
+				}
+			}
+			tx.success();
+		}		
 	}
 }

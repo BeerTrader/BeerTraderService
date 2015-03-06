@@ -12,8 +12,7 @@ public class DataManager {
 	        	graphDb = DatabaseFactory.build("Prod");
 	        	registerShutdownHook( graphDb );
 	        	System.out.println("Graph Database Initialized.");
-	        }
-	        catch(Exception e) {
+	        } catch(Exception e) {
 	            e.printStackTrace();
 	        }
 	    }

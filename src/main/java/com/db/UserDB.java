@@ -36,8 +36,7 @@ public class UserDB {
 				tx.success();
 				return user;
 			}
-		}
-		else {
+		} else {
 			throw new UserNotFoundException(username);
 		}
 	}
@@ -55,15 +54,13 @@ public class UserDB {
 		User authorizedUser;
 		try {
 			authorizedUser = UserDB.getUser(username);
-		}
-		catch (UserNotFoundException e) {
+		} catch (UserNotFoundException e) {
 			throw new UserNotAuthorizedException(username);
 		}
 		
 		if (StringUtils.equals(authorizedUser.getPassword(), password)) {
 			return authorizedUser;
-		}
-		else {
+		} else {
 			throw new UserNotAuthorizedException(username);
 		}
 	}	

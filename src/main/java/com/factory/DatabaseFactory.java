@@ -11,8 +11,7 @@ public class DatabaseFactory {
 	public static GraphDatabaseService build(String type) {
 		if ("Test".equals(type)) {
 			return new TestGraphDatabaseFactory().newImpermanentDatabase();
-		}
-		else {
+		} else {
 			return new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		}
 	}

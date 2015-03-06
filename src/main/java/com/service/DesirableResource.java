@@ -8,7 +8,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 
 import com.db.RelationshipTypeDB;
 import com.db.TradingEntityDB;
@@ -24,27 +26,44 @@ public class DesirableResource {
     @POST
     @Path("/addDesirable")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addDesireable(@Context HttpHeaders headers, String tradingEntity) {
+    public Response addDesirable(@Context HttpHeaders headers, String tradingEntity) {
     	String auth = headers.getRequestHeaders().getFirst("authorization");
     	try {
     		Node userNode = UserDB.getUserNode(auth);
-    		Node tradingEntityNode;
 			TradingEntity newTradingEntity = (TradingEntity) ObjectManager.readObjectAsString(tradingEntity, TradingEntity.class);
-			if (TradingEntityDB.entityExists(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIRABLE)==true) {
-				//then related nodes must exist
-				tradingEntityNode = TradingEntityDB.getTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIRABLE);
-			}
-			else {
-				tradingEntityNode = TradingEntityDB.addTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIRABLE, LabelFactory.getLabel(newTradingEntity.getLabel()));
-			}
-			RelationshipTypeDB.addRelationshipBetweenNodes(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.DESIRES);
-			if (newTradingEntity.getRelations().size()>0) {
-				//addRelations
-			}
+			Label tradingEntityLabel = LabelFactory.getLabel(newTradingEntity.getLabel());
+			Node tradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIRABLE, tradingEntityLabel);
 			
+			RelationshipTypeDB.addRelationshipBetweenNodes(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.DESIRES);
+			if (newTradingEntity.getRelations()!=null) {
+				for (TradingEntity relatedTradingEntity: newTradingEntity.getRelations()) {
+					Label relatedTradingEntityLabel = LabelFactory.getLabel(relatedTradingEntity.getLabel());
+					Node relatedTradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(relatedTradingEntity.getName(), LabelFactory.getLabel(relatedTradingEntity.getLabel()));
+					RelationshipType newRelation = RelationshipTypeFactory.getRelationshipType(tradingEntityLabel, relatedTradingEntityLabel);
+;					RelationshipTypeDB.addRelationshipBetweenNodes(tradingEntityNode, relatedTradingEntityNode, newRelation);
+				}
+			}
 			return Response.status(200).entity(newTradingEntity.getName()).build();
-    	}
-	    catch(ObjectMappingException e) {
+    	} catch(ObjectMappingException e) {
+	    	System.out.println(e.getMessage());
+	    	return Response.status(400).entity(e.getMessage()).build();
+	    }
+    }
+    
+    @POST
+    @Path("/removeDesirable")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response removeDesirable(@Context HttpHeaders headers, String tradingEntity) {
+    	String auth = headers.getRequestHeaders().getFirst("authorization");
+    	try {
+    		Node userNode = UserDB.getUserNode(auth);
+    		TradingEntity entity = (TradingEntity) ObjectManager.readObjectAsString(tradingEntity, TradingEntity.class);
+    		Label tradingEntityLabel = LabelFactory.getLabel(entity.getLabel());
+    		Node tradingEntityNode = TradingEntityDB.getTradingEntity(entity.getName(), tradingEntityLabel);
+    		RelationshipTypeDB.removeRelationship(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.DESIRES);
+    		
+    		return Response.status(200).entity(entity.getName()).build();
+    	} catch(ObjectMappingException e) {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }

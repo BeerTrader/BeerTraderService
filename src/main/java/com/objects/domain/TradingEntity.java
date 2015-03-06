@@ -1,6 +1,7 @@
 package com.objects.domain;
 
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TradingEntity {
@@ -19,7 +20,6 @@ public class TradingEntity {
 		this.id = id;
 		this.label = label;
 		this.name = name;
-		this.relations = relations;
 	}
 	
 	public String getLabel() {

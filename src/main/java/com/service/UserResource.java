@@ -34,8 +34,7 @@ public class UserResource {
     		User user = UserDB.getUser(username);
     		String result = ObjectManager.writeObjectAsString(user);
     		return Response.status(200).entity(result).build();
-    	}
-    	catch(UserNotFoundException | ObjectMappingException e) {
+    	} catch(UserNotFoundException | ObjectMappingException e) {
     		return Response.status(400).entity(e.getMessage()).build();
     	}
     }
@@ -50,8 +49,7 @@ public class UserResource {
 			UserDB.registerUser(newUser.getUsername(), newUser.getPassword());
 			String result = "User created with username: " + newUser.getUsername();
 			return Response.status(200).entity(result).build();
-    	}
-	    catch(DuplicateUserException | ObjectMappingException e) {
+    	} catch(DuplicateUserException | ObjectMappingException e) {
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }
     }
@@ -77,8 +75,7 @@ public class UserResource {
         	System.out.println("New Encoded Token: " + token);
 	        TokenManager.addToken(token, authorizedUser);
 	        return Response.status(200).entity(token).build();
-        }
-        catch (UserNotAuthorizedException e) {
+        } catch (UserNotAuthorizedException e) {
 	    	return Response.status(400).entity(e.getMessage()).build();
         }
     }
