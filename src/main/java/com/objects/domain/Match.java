@@ -23,6 +23,10 @@ public class Match {
 		this.user = user;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
 	public void setOfferable(TradingEntity offerable) {
 		this.offerable = offerable;
 	}

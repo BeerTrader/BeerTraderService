@@ -12,6 +12,7 @@ import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 
 import com.db.DataManager;
+import com.db.MatchDB;
 import com.factory.LabelFactory;
 import com.factory.RelationshipTypeFactory;
 import com.objects.domain.Match;
@@ -35,19 +36,9 @@ public class Neo4JTestClass {
 				Node beer = d.findNodesByLabelAndProperty(LabelFactory.BeerLabels.BEER, "name", "Stella").iterator().next();
 				Node beer2 = d.findNodesByLabelAndProperty(LabelFactory.BeerLabels.BEER, "name", "Coors").iterator().next();
 				Node beerType = d.findNodesByLabelAndProperty(LabelFactory.BeerLabels.BEERTYPE, "name", "Pilsner").iterator().next();
-				Map<Node,List<Node>> results = findMatches(user);
-				MatchList ml = new MatchList();
-				Match m = new Match();
-				for (Map.Entry<Node, List<Node>> entry : results.entrySet()) {
-					m.setUser(User.convertToUser(entry.getKey()));
-					Node offerable = entry.getValue().get(0);
-					Node desirable = entry.getValue().get(1);
-					m.setOfferable(TradingEntity.convertToTradingEntity(offerable));
-					m.setDesirable(TradingEntity.convertToTradingEntity(desirable));
-				}
-				ml.addMatch(m);
-				ml.addMatch(m);
-				System.out.println(ObjectManager.writeObjectAsString(ml));
+
+				System.out.println(ObjectManager.writeObjectAsString(MatchDB.findMatches(user)));
+				/*
 				System.out.println("---");
 				results = findMatches(user2);
 				for (Map.Entry<Node, List<Node>> entry : results.entrySet()) {
@@ -64,6 +55,7 @@ public class Neo4JTestClass {
 						System.out.println(e.getId());
 					}
 				}
+				*/
 			}
 		}
 		catch(Exception e) {
@@ -72,55 +64,6 @@ public class Neo4JTestClass {
 		finally {
 			DataManager.shutdownGraphDb();
 		}
-	}
-	
-	public static Map<Node,List<Node>> findMatches(Node userNode) {
-		//Return object, empty initialized
-		Map<Node,List<Node>> returnMap = new HashMap<Node,List<Node>>();
-		//Loop through TradingEntities user is desiring, if none return empty list
-		Iterable<Relationship> desiringRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("DESIRES"));
-		if (desiringRelationships.iterator().hasNext()) {
-			//Loop through desired tradingEntities
-			for (Relationship desiringRelationship: desiringRelationships) {
-				Node tradingEntity = desiringRelationship.getOtherNode(userNode);
-				//if beer, add people offering that beer
-				if (tradingEntity.hasLabel(LabelFactory.getLabel("BEER"))) {
-					List<Node> offerers = getOfferers(tradingEntity);
-					for (Node offerer: offerers) {
-						List<Node> offering = new ArrayList<Node>();
-						offering.add(tradingEntity);
-						offering.add(tradingEntity);
-						returnMap.put(offerer, offering);
-					}
-				}
-				else {
-					//if other tradingEntity, find users who offer beers of those entities
-					Iterable<Relationship> relatedEntityRelationships = tradingEntity.getRelationships(RelationshipTypeFactory.getRelationshipType("IS_A"), RelationshipTypeFactory.getRelationshipType("MADE_BY"));
-					for (Relationship relatedEntityRelationship: relatedEntityRelationships) {
-						Node relatedTradingEntity = relatedEntityRelationship.getOtherNode(tradingEntity);
-						List<Node> offerers = getOfferers(relatedTradingEntity);
-						for (Node offerer: offerers) {
-							List<Node> offering = new ArrayList<Node>();
-							offering.add(relatedTradingEntity);  //beer aka offerable
-							offering.add(tradingEntity); //beer type or brewery aka desirable
-							returnMap.put(offerer, offering);	
-						}
-					}
-				}
-			}
-		}
-		return returnMap;
-	}
-
-	public static List<Node> getOfferers(Node tradingEntity) {
-		List<Node> offerers = new ArrayList<>();
-		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Iterable<Relationship> offerableRelationships = tradingEntity.getRelationships(RelationshipTypeFactory.getRelationshipType("OFFERS"));
-			for (Relationship offerableRelationship: offerableRelationships) {
-				offerers.add(offerableRelationship.getOtherNode(tradingEntity));
-			}	
-		}
-		return offerers;
 	}
 
 ///////////////////////////////////////////////////////////////////////	

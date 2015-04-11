@@ -16,6 +16,14 @@ public class MatchList {
 	public void addMatch(Match m) {
 		matchList.add(m);
 	}
+	
+	public boolean userInList(String username) {
+		for (Match m: matchList) {
+			if (m.getUser().getUsername().equals(username))
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
