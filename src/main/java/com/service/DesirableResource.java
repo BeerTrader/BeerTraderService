@@ -32,7 +32,7 @@ public class DesirableResource {
     		Node userNode = UserDB.getUserNode(auth);
 			TradingEntity newTradingEntity = (TradingEntity) ObjectManager.readObjectAsString(tradingEntity, TradingEntity.class);
 			Label tradingEntityLabel = LabelFactory.getLabel(newTradingEntity.getLabel());
-			Node tradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.DESIRABLE, tradingEntityLabel);
+			Node tradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(newTradingEntity.getName(), tradingEntityLabel);
 			
 			RelationshipTypeDB.addRelationshipBetweenNodes(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.DESIRES);
 			if (newTradingEntity.getRelations()!=null) {

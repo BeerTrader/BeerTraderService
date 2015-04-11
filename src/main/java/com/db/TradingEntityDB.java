@@ -30,7 +30,7 @@ public class TradingEntityDB {
 		}
 	}
 	
-	public static Node addTradingEntity(String name, Label... label) {
+	public static Node addTradingEntity(String name, Label label) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Node newTradingEntityNode = DataManager.getInstance().createNode(label);
 			newTradingEntityNode.setProperty("name", name);
@@ -39,11 +39,11 @@ public class TradingEntityDB {
 		}
 	}
 	
-	public static Node getOrCreateTradingEntity(String name, Label... labels) {
-		if (entityExists(name, labels[0])) {
-			return getTradingEntity(name, labels[0]);
+	public static Node getOrCreateTradingEntity(String name, Label label) {
+		if (entityExists(name, label)) {
+			return getTradingEntity(name, label);
 		} else {
-			return addTradingEntity(name, labels);
+			return addTradingEntity(name, label);
 		}
 	}
 }

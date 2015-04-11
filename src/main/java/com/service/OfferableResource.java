@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
+
 import com.db.RelationshipTypeDB;
 import com.db.TradingEntityDB;
 import com.db.UserDB;
@@ -30,10 +32,17 @@ public class OfferableResource {
     		Node userNode = UserDB.getUserNode(auth);
 			TradingEntity newTradingEntity = (TradingEntity) ObjectManager.readObjectAsString(tradingEntity, TradingEntity.class);
 			Label tradingEntityLabel = LabelFactory.getLabel(newTradingEntity.getLabel());
-			Node tradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(newTradingEntity.getName(), LabelFactory.BeerLabels.OFFERABLE, tradingEntityLabel);
+			Node tradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(newTradingEntity.getName(), tradingEntityLabel);
 			
 			RelationshipTypeDB.addRelationshipBetweenNodes(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.OFFERS);
-			
+			if (newTradingEntity.getRelations()!=null) {
+				for (TradingEntity relatedTradingEntity: newTradingEntity.getRelations()) {
+					Label relatedTradingEntityLabel = LabelFactory.getLabel(relatedTradingEntity.getLabel());
+					Node relatedTradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(relatedTradingEntity.getName(), LabelFactory.getLabel(relatedTradingEntity.getLabel()));
+					RelationshipType newRelation = RelationshipTypeFactory.getRelationshipType(tradingEntityLabel, relatedTradingEntityLabel);
+;					RelationshipTypeDB.addRelationshipBetweenNodes(tradingEntityNode, relatedTradingEntityNode, newRelation);
+				}
+			}			
 			return Response.status(200).entity(newTradingEntity.getName()).build();
     	} catch(ObjectMappingException e) {
 	    	System.out.println(e.getMessage());

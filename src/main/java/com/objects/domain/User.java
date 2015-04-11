@@ -1,5 +1,7 @@
 package com.objects.domain;
 
+import org.neo4j.graphdb.Node;
+
 public class User {
 	private long id;
 	private String username;
@@ -25,5 +27,9 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + "]";
+	}
+	
+	public static User convertToUser(Node userNode) {
+		return new User(userNode.getId(), userNode.getProperty("username").toString(), null);
 	}
 }
