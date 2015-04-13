@@ -13,6 +13,7 @@ import org.neo4j.graphdb.traversal.TraversalDescription;
 
 import com.db.DataManager;
 import com.db.MatchDB;
+import com.db.MatchNodeDB;
 import com.factory.LabelFactory;
 import com.factory.RelationshipTypeFactory;
 import com.objects.domain.Match;
@@ -37,7 +38,7 @@ public class Neo4JTestClass {
 				Node beer2 = d.findNodesByLabelAndProperty(LabelFactory.BeerLabels.BEER, "name", "Coors").iterator().next();
 				Node beerType = d.findNodesByLabelAndProperty(LabelFactory.BeerLabels.BEERTYPE, "name", "Pilsner").iterator().next();
 
-				System.out.println(ObjectManager.writeObjectAsString(MatchDB.findMatches(user)));
+				System.out.println(ObjectManager.writeObjectAsString(MatchDB.convertToMatchList(MatchNodeDB.findNewMatches(user))));
 				/*
 				System.out.println("---");
 				results = findMatches(user2);

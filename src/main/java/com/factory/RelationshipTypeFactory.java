@@ -4,7 +4,7 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 public class RelationshipTypeFactory {
-	public enum BeerRelationships implements RelationshipType { IS_A, MADE_BY, DESIRES, OFFERS, ERROR; } 
+	public enum BeerRelationships implements RelationshipType { IS_A, MADE_BY, DESIRES, OFFERS, PENDING_DESIRER, PENDING_OFFERER, ACCEPT, REJECT, MATCH_OFFER, MATCH_DESIRE, ERROR; } 
 	
 	public static RelationshipType getRelationshipType(String relationshipName) {
 		for (RelationshipType r: BeerRelationships.values()) {
