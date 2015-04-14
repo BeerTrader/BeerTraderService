@@ -10,8 +10,9 @@ public class MatchNode {
 	
 	public MatchNode(Node offerer, Node desirer, Node offerable, Node desirable) {
 		this.offerer = offerer;
-		this.offerer = offerable;
-		this.offerer = desirable;
+		this.desirer = desirer;
+		this.offerable = offerable;
+		this.desirable = desirable;
 	}
 
 	public Node getOfferer() {

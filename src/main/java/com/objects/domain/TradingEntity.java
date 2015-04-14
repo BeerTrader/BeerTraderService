@@ -35,10 +35,6 @@ public class TradingEntity {
 	public List<TradingEntity> getRelations() {
 		return this.relations;
 	}
-	
-	public static TradingEntity convertToTradingEntity(Node te) {
-		return new TradingEntity(te.getId(), te.getLabels().iterator().next().name(), te.getProperty("name").toString(), null);
-	}
  
 	@Override
 	public String toString() {

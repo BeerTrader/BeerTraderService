@@ -6,6 +6,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import com.objects.domain.TradingEntity;
+
 public class TradingEntityDB {
 	
 	public static boolean entityExists(String name, Label label) {
@@ -46,4 +48,12 @@ public class TradingEntityDB {
 			return addTradingEntity(name, label);
 		}
 	}
+	
+	public static TradingEntity convertToTradingEntity(Node te) {
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			TradingEntity t = new TradingEntity(te.getId(), te.getLabels().iterator().next().name(), te.getProperty("name").toString(), null);
+			tx.success();
+			return t;
+		}
+	}	
 }

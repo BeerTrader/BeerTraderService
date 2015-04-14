@@ -15,22 +15,30 @@ import com.objects.domain.MatchNode;
 public class MatchNodeDB {
 	public static List<MatchNode> getPendingMatches(Node userNode) {
 		List<MatchNode> returnList = new ArrayList<>();
-		Iterable<Relationship> pendingRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
-		for (Relationship pendingRelationship: pendingRelationships) {
-			Node matchNode = pendingRelationship.getOtherNode(userNode);
-			returnList.add(getMatchNode(matchNode));
-		}
-		if (returnList.size()<25) {
-			List<MatchNode> newMatches = findNewMatches(userNode);
-			for (MatchNode newMatch: newMatches) {
-				if (returnList.size()<25) {
-					addMatch(newMatch);
-					returnList.add(newMatch);
-				}
-				else {
-					break;
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			Iterable<Relationship> pendingRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+			for (Relationship pendingRelationship: pendingRelationships) {
+				Node matchNode = pendingRelationship.getOtherNode(userNode);
+				returnList.add(getMatchNode(matchNode));
+			}
+			if (returnList.size()<25) {
+				List<MatchNode> newMatches = findNewMatches(userNode);
+				for (MatchNode newMatch: newMatches) {
+					if (returnList.size()<25) {
+						if (matchExists(newMatch)==false) {
+							addMatch(newMatch);
+							returnList.add(newMatch);
+						}
+					}
+					else {
+						break;
+					}
 				}
 			}
+			tx.success();
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
 		}
 		return returnList;
 	}
@@ -38,37 +46,40 @@ public class MatchNodeDB {
 	public static List<MatchNode> findNewMatches(Node userNode) {
 		//Return object, empty initialized
 		List<MatchNode> returnList = new ArrayList<>();
-		//Loop through TradingEntities user is desiring, if none return empty list
-		Iterable<Relationship> desiringRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("DESIRES"));
-		if (desiringRelationships.iterator().hasNext()) {
-			//Loop through desired tradingEntities
-			for (Relationship desiringRelationship: desiringRelationships) {
-				Node tradingEntity = desiringRelationship.getOtherNode(userNode);
-				//if beer, add people offering that beer
-				if (tradingEntity.hasLabel(LabelFactory.getLabel("BEER"))) {
-					List<Node> offerers = getOfferers(tradingEntity);
-					for (Node offerer: offerers) {
-						if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
-							MatchNode m = new MatchNode(userNode,offerer,tradingEntity,tradingEntity);
-							returnList.add(m);
-						}
-					}
-				}
-				else {
-					//if other tradingEntity, find users who offer beers of those entities
-					Iterable<Relationship> relatedEntityRelationships = tradingEntity.getRelationships(RelationshipTypeFactory.getRelationshipType("IS_A"), RelationshipTypeFactory.getRelationshipType("MADE_BY"));
-					for (Relationship relatedEntityRelationship: relatedEntityRelationships) {
-						Node relatedTradingEntity = relatedEntityRelationship.getOtherNode(tradingEntity);
-						List<Node> offerers = getOfferers(relatedTradingEntity);
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			//Loop through TradingEntities user is desiring, if none return empty list
+			Iterable<Relationship> desiringRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("DESIRES"));
+			if (desiringRelationships.iterator().hasNext()) {
+				//Loop through desired tradingEntities
+				for (Relationship desiringRelationship: desiringRelationships) {
+					Node tradingEntity = desiringRelationship.getOtherNode(userNode);
+					//if beer, add people offering that beer
+					if (tradingEntity.hasLabel(LabelFactory.getLabel("BEER"))) {
+						List<Node> offerers = getOfferers(tradingEntity);
 						for (Node offerer: offerers) {
 							if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
-								MatchNode m = new MatchNode(userNode,offerer,relatedTradingEntity,tradingEntity);
+								MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
 								returnList.add(m);
+							}
+						}
+					}
+					else {
+						//if other tradingEntity, find users who offer beers of those entities
+						Iterable<Relationship> relatedEntityRelationships = tradingEntity.getRelationships(RelationshipTypeFactory.getRelationshipType("IS_A"), RelationshipTypeFactory.getRelationshipType("MADE_BY"));
+						for (Relationship relatedEntityRelationship: relatedEntityRelationships) {
+							Node relatedTradingEntity = relatedEntityRelationship.getOtherNode(tradingEntity);
+							List<Node> offerers = getOfferers(relatedTradingEntity);
+							for (Node offerer: offerers) {
+								if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
+									MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
+									returnList.add(m);
+								}
 							}
 						}
 					}
 				}
 			}
+			tx.success();
 		}
 		return returnList;
 	}
@@ -80,6 +91,7 @@ public class MatchNodeDB {
 			for (Relationship offerableRelationship: offerableRelationships) {
 				offerers.add(offerableRelationship.getOtherNode(tradingEntity));
 			}
+			tx.success();
 		}
 		return offerers;
 	}
@@ -87,8 +99,8 @@ public class MatchNodeDB {
 	private static void addMatch(MatchNode mNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Node newMatchNode = DataManager.getInstance().createNode(LabelFactory.getLabel("MATCH"));
-			newMatchNode.createRelationshipTo(mNode.getDesirer(), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 			newMatchNode.createRelationshipTo(mNode.getOfferer(), RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+			newMatchNode.createRelationshipTo(mNode.getDesirer(), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 			newMatchNode.createRelationshipTo(mNode.getOfferable(), RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
 			newMatchNode.createRelationshipTo(mNode.getDesirable(), RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
 			tx.success();
@@ -104,17 +116,32 @@ public class MatchNodeDB {
 	}
 	
 	private static MatchNode getMatchNode(Node matchNode) {
-		Node desirer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 		Node offerer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+		Node desirer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 		Node desirable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
 		Node offerable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
-		return new MatchNode(desirer,offerer,desirable,offerable);
+		return new MatchNode(offerer,desirer,offerable,desirable);
+	}
+	
+	private static boolean matchExists(MatchNode matchNode) {
+		List<Node> offererMatches = getNodesOfRelationshipType(matchNode.getOfferer(),RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+		for (Node offererMatch: offererMatches) {
+			List<Node> desirerMatches = getNodesOfRelationshipType(offererMatch,RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+			for (Node desirerMatch: desirerMatches) {
+				if (matchNode.getDesirer().equals(desirerMatch)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	//TODO Move to DB helper class
 	private static Node getFirstNodeOfRelationshipType(Node sourceNode, RelationshipType rType) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			return sourceNode.getRelationships(rType).iterator().next().getOtherNode(sourceNode);
+			Node firstRelationshipNode = sourceNode.getRelationships(rType).iterator().next().getOtherNode(sourceNode);
+			tx.success();
+			return firstRelationshipNode;
 		}
 	}
 
@@ -126,6 +153,7 @@ public class MatchNodeDB {
 			for (Relationship relationship: relationships) {
 				returnList.add(relationship.getOtherNode(sourceNode));
 			}
+			tx.success();
 		}
 		return returnList;
 	}

@@ -21,7 +21,7 @@ public class MatchResource {
     public Response getMatches(@Context HttpHeaders headers, String tradingEntity) {
     	String auth = headers.getRequestHeaders().getFirst("authorization");
     	Node userNode = UserDB.getUserNode(auth);
-		MatchList newMatches = MatchDB.findMatches(userNode);
+		MatchList newMatches = MatchDB.getUnrespondedMatches(userNode);
 		try {
 			String results = ObjectManager.writeObjectAsString(newMatches);
 			return Response.status(200).entity(results).build();

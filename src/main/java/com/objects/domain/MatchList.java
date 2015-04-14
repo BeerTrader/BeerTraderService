@@ -19,7 +19,7 @@ public class MatchList {
 	
 	public boolean userInList(String username) {
 		for (Match m: matchList) {
-			if (m.getUser().getUsername().equals(username))
+			if (m.getOfferer().getUsername().equals(username))
 				return true;
 		}
 		return false;

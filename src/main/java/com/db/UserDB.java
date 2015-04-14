@@ -77,4 +77,12 @@ public class UserDB {
 			tx.success();
 		}
 	}
+	
+	public static User convertToUser(Node userNode) {
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			User u = new User(userNode.getId(), userNode.getProperty("username").toString(), null);
+			tx.success();
+			return u;
+		}
+	}
 }
