@@ -2,8 +2,6 @@ package com.objects.domain;
 
 import java.util.List;
 
-import org.neo4j.graphdb.Node;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TradingEntity {

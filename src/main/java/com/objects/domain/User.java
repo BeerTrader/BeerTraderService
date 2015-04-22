@@ -1,7 +1,5 @@
 package com.objects.domain;
 
-import org.neo4j.graphdb.Node;
-
 public class User {
 	private long id;
 	private String username;
