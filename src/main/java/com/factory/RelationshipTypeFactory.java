@@ -23,12 +23,6 @@ public class RelationshipTypeFactory {
 			} else if (destLabel.equals(LabelFactory.BeerLabels.BREWERY)) {
 				return BeerRelationships.MADE_BY;
 			}
-		} else if (sourceLabel.equals(LabelFactory.BeerLabels.USER)) {
-			if (destLabel.equals(LabelFactory.BeerLabels.DESIRABLE)) {
-				return BeerRelationships.DESIRES;
-			} else if (destLabel.equals(LabelFactory.BeerLabels.OFFERABLE)) {
-				return BeerRelationships.OFFERS;
-			}
 		}
 		System.out.println("Could not find relationship type in RelationshipTypeFactory for Labels: " + sourceLabel.name() + " and " + destLabel.name() + ".  Returning ERROR RelationshipType.");
 		return BeerRelationships.ERROR;
