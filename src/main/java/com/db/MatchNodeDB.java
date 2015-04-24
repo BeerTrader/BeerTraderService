@@ -99,6 +99,7 @@ public class MatchNodeDB {
 	private static void addMatch(MatchNode mNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Node newMatchNode = DataManager.getInstance().createNode(LabelFactory.getLabel("MATCH"));
+			mNode.setId(newMatchNode.getId());
 			newMatchNode.createRelationshipTo(mNode.getOfferer(), RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
 			newMatchNode.createRelationshipTo(mNode.getDesirer(), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 			newMatchNode.createRelationshipTo(mNode.getOfferable(), RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
@@ -120,7 +121,7 @@ public class MatchNodeDB {
 		Node desirer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 		Node desirable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
 		Node offerable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
-		return new MatchNode(offerer,desirer,offerable,desirable);
+		return new MatchNode(matchNode.getId(),offerer,desirer,offerable,desirable);
 	}
 	
 	private static boolean matchExists(MatchNode matchNode) {

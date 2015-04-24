@@ -3,6 +3,7 @@ package com.objects.domain;
 import org.neo4j.graphdb.Node;
 
 public class MatchNode {
+	private long id;
 	private Node offerer;
 	private Node desirer;
 	private Node offerable;
@@ -13,6 +14,22 @@ public class MatchNode {
 		this.desirer = desirer;
 		this.offerable = offerable;
 		this.desirable = desirable;
+	}
+
+	public MatchNode(long id, Node offerer, Node desirer, Node offerable, Node desirable) {
+		this.id = id;
+		this.offerer = offerer;
+		this.desirer = desirer;
+		this.offerable = offerable;
+		this.desirable = desirable;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public Node getOfferer() {

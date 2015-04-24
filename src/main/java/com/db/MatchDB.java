@@ -23,7 +23,7 @@ public class MatchDB {
 			User u = UserDB.convertToUser(mNode.getOfferer());
 			TradingEntity offerable = TradingEntityDB.convertToTradingEntity(mNode.getOfferable());
 			TradingEntity desirable = TradingEntityDB.convertToTradingEntity(mNode.getDesirable());
-			Match m = new Match(u,offerable,desirable);
+			Match m = new Match(mNode.getId(),u,offerable,desirable);
 			returnList.addMatch(m);
 		}
 		

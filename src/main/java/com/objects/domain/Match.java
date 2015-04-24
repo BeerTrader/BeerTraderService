@@ -3,6 +3,8 @@ package com.objects.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Match {
+	@JsonProperty("id")
+	private long id;
 	@JsonProperty("offerer")
 	private User offerer;
 	@JsonProperty("offerable")
@@ -13,7 +15,8 @@ public class Match {
 	public Match() {
 	}
 	
-	public Match(User offerer, TradingEntity offerable, TradingEntity desirable) {
+	public Match(long id, User offerer, TradingEntity offerable, TradingEntity desirable) {
+		this.id = id;
 		this.offerer = offerer;
 		this.offerable = offerable;
 		this.desirable = desirable;
@@ -37,6 +40,6 @@ public class Match {
 
 	@Override
 	public String toString() {
-		return "Match [offerer=" + offerer + ", offerable=" + offerable + ", desirable=" + desirable + "]";
+		return "Match [id=" + id + "offerer=" + offerer + ", offerable=" + offerable + ", desirable=" + desirable + "]";
 	}
 }
