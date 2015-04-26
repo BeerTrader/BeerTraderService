@@ -34,7 +34,7 @@ public class TradingEntityDB {
 	
 	public static Node addTradingEntity(String name, Label label) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Node newTradingEntityNode = DataManager.getInstance().createNode(label);
+			Node newTradingEntityNode = DBHelper.createNodeWithUniqueId(label);
 			newTradingEntityNode.setProperty("name", name);
 			tx.success();
 			return newTradingEntityNode;
@@ -51,7 +51,7 @@ public class TradingEntityDB {
 	
 	public static TradingEntity convertToTradingEntity(Node te) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			TradingEntity t = new TradingEntity(te.getId(), te.getLabels().iterator().next().name(), te.getProperty("name").toString(), null);
+			TradingEntity t = new TradingEntity(Long.parseLong(te.getProperty("id").toString()), te.getLabels().iterator().next().name(), te.getProperty("name").toString(), null);
 			tx.success();
 			return t;
 		}

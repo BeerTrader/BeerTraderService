@@ -41,12 +41,16 @@ public class UserDB {
 		}
 	}
 	
-	public static Node getUserNode(String token) {
+	public static Node getUserNode(String token) throws UserNotFoundException {
 		User u = TokenManager.getUser(token);
-		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Node userNode = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", u.getUsername()).iterator().next();
-			tx.success();
-			return userNode;
+		if (UserDB.userExists(u.getUsername())) {
+			try (Transaction tx = DataManager.getInstance().beginTx()) {
+				Node userNode = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", u.getUsername()).iterator().next();
+				tx.success();
+				return userNode;
+			}
+		} else {
+			throw new UserNotFoundException(u.getUsername());
 		}
 	}	
 	
@@ -71,7 +75,7 @@ public class UserDB {
 		}
 		
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Node newUserNode = DataManager.getInstance().createNode(LabelFactory.BeerLabels.USER);
+			Node newUserNode = DBHelper.createNodeWithUniqueId(LabelFactory.getLabel("USER"));
 			newUserNode.setProperty("username", username);
 			newUserNode.setProperty("password", password);
 			tx.success();
@@ -80,7 +84,7 @@ public class UserDB {
 	
 	public static User convertToUser(Node userNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			User u = new User(userNode.getId(), userNode.getProperty("username").toString(), null);
+			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), null);
 			tx.success();
 			return u;
 		}

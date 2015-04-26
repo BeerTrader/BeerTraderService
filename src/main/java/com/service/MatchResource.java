@@ -1,16 +1,22 @@
 package com.service;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.NotFoundException;
 
 import com.db.MatchDB;
 import com.db.UserDB;
 import com.exceptions.ObjectMappingException;
+import com.exceptions.UserNotFoundException;
+import com.objects.domain.Match;
 import com.objects.domain.MatchList;
 import com.objects.mapping.ObjectManager;
 
@@ -18,16 +24,51 @@ import com.objects.mapping.ObjectManager;
 public class MatchResource {
     @GET
     @Path("/getMatches")
-    public Response getMatches(@Context HttpHeaders headers, String tradingEntity) {
+    public Response getMatches(@Context HttpHeaders headers) {
     	String auth = headers.getRequestHeaders().getFirst("authorization");
-    	Node userNode = UserDB.getUserNode(auth);
-		MatchList newMatches = MatchDB.getUnrespondedMatches(userNode);
 		try {
+	    	Node userNode = UserDB.getUserNode(auth);
+			MatchList newMatches = MatchDB.getUnrespondedMatches(userNode);
 			String results = ObjectManager.writeObjectAsString(newMatches);
 			return Response.status(200).entity(results).build();
-		} catch (ObjectMappingException e) {
+		} catch (ObjectMappingException | UserNotFoundException e) {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 		}
     }
+
+    //TODO Should return chat token of other user
+    @POST
+    @Path("/acceptMatch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response acceptMatch(@Context HttpHeaders headers, String matchJson) {
+    	String auth = headers.getRequestHeaders().getFirst("authorization");
+    	try {
+    		Node userNode = UserDB.getUserNode(auth);
+    		Match match = (Match) ObjectManager.readObjectAsString(matchJson, Match.class);
+    		MatchDB.acceptMatch(userNode, match);
+    		return Response.status(200).entity("Match accepted between user node " + userNode.getId() + " and match node " + match.getId()).build();
+    	}
+    	catch (ObjectMappingException | UserNotFoundException | NotFoundException e) {
+	    	System.out.println(e.getMessage());
+	    	return Response.status(400).entity(e.getMessage()).build();
+		}
+    }
+    
+    @POST
+    @Path("/rejectMatch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response rejectMatch(@Context HttpHeaders headers, String matchJson) {
+    	String auth = headers.getRequestHeaders().getFirst("authorization");
+    	try {
+    		Node userNode = UserDB.getUserNode(auth);
+    		Match match = (Match) ObjectManager.readObjectAsString(matchJson, Match.class);
+    		MatchDB.rejectMatch(userNode, match);
+    		return Response.status(200).entity("Match rejected between user node " + userNode.getId() + " and match node " + match.getId()).build();
+    	}
+    	catch (ObjectMappingException | UserNotFoundException | NotFoundException e) {
+	    	System.out.println(e.getMessage());
+	    	return Response.status(400).entity(e.getMessage()).build();
+		}
+    }    
 }

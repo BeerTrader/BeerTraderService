@@ -16,6 +16,7 @@ import com.db.RelationshipTypeDB;
 import com.db.TradingEntityDB;
 import com.db.UserDB;
 import com.exceptions.ObjectMappingException;
+import com.exceptions.UserNotFoundException;
 import com.factory.LabelFactory;
 import com.factory.RelationshipTypeFactory;
 import com.objects.domain.TradingEntity;
@@ -44,7 +45,7 @@ public class DesirableResource {
 				}
 			}
 			return Response.status(200).entity(newTradingEntity.getName()).build();
-    	} catch(ObjectMappingException e) {
+    	} catch(ObjectMappingException | UserNotFoundException e) {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }
@@ -63,7 +64,7 @@ public class DesirableResource {
     		RelationshipTypeDB.removeRelationship(userNode, tradingEntityNode, RelationshipTypeFactory.BeerRelationships.DESIRES);
     		
     		return Response.status(200).entity(entity.getName()).build();
-    	} catch(ObjectMappingException e) {
+    	} catch(ObjectMappingException | UserNotFoundException e) {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 	    }

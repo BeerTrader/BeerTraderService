@@ -22,21 +22,21 @@ public class Match {
 		this.desirable = desirable;
 	}
  
+	public long getId() {
+		return id;
+	}
+
 	public User getOfferer() {
 		return offerer;
 	}
 
-	public void setOfferer(User offerer) {
-		this.offerer = offerer;
+	public TradingEntity getOfferable() {
+		return offerable;
 	}
-
-	public void setOfferable(TradingEntity offerable) {
-		this.offerable = offerable;
-	}
-
-	public void setDesirable(TradingEntity desirable) {
-		this.desirable = desirable;
-	}
+	
+	public TradingEntity getDesirable() {
+		return desirable;
+	}	
 
 	@Override
 	public String toString() {

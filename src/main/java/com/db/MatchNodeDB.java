@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 import com.factory.LabelFactory;
@@ -98,8 +97,8 @@ public class MatchNodeDB {
 	
 	private static void addMatch(MatchNode mNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Node newMatchNode = DataManager.getInstance().createNode(LabelFactory.getLabel("MATCH"));
-			mNode.setId(newMatchNode.getId());
+			Node newMatchNode = DBHelper.createNodeWithUniqueId(LabelFactory.getLabel("MATCH"));
+			mNode.setId(Long.parseLong(newMatchNode.getProperty("id").toString()));
 			newMatchNode.createRelationshipTo(mNode.getOfferer(), RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
 			newMatchNode.createRelationshipTo(mNode.getDesirer(), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 			newMatchNode.createRelationshipTo(mNode.getOfferable(), RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
@@ -117,17 +116,17 @@ public class MatchNodeDB {
 	}
 	
 	private static MatchNode getMatchNode(Node matchNode) {
-		Node offerer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
-		Node desirer = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
-		Node desirable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
-		Node offerable = getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
-		return new MatchNode(matchNode.getId(),offerer,desirer,offerable,desirable);
+		Node offerer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+		Node desirer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+		Node desirable = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
+		Node offerable = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
+		return new MatchNode(Long.parseLong(matchNode.getProperty("id").toString()),offerer,desirer,offerable,desirable);
 	}
 	
 	private static boolean matchExists(MatchNode matchNode) {
-		List<Node> offererMatches = getNodesOfRelationshipType(matchNode.getOfferer(),RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+		List<Node> offererMatches = DBHelper.getNodesOfRelationshipType(matchNode.getOfferer(),RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
 		for (Node offererMatch: offererMatches) {
-			List<Node> desirerMatches = getNodesOfRelationshipType(offererMatch,RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+			List<Node> desirerMatches = DBHelper.getNodesOfRelationshipType(offererMatch,RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 			for (Node desirerMatch: desirerMatches) {
 				if (matchNode.getDesirer().equals(desirerMatch)) {
 					return true;
@@ -135,27 +134,5 @@ public class MatchNodeDB {
 			}
 		}
 		return false;
-	}
-	
-	//TODO Move to DB helper class
-	private static Node getFirstNodeOfRelationshipType(Node sourceNode, RelationshipType rType) {
-		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Node firstRelationshipNode = sourceNode.getRelationships(rType).iterator().next().getOtherNode(sourceNode);
-			tx.success();
-			return firstRelationshipNode;
-		}
-	}
-
-	//TODO Move to DB helper class	
-	private static List<Node> getNodesOfRelationshipType(Node sourceNode, RelationshipType rType) {
-		List<Node> returnList = new ArrayList<>();
-		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Iterable<Relationship> relationships = sourceNode.getRelationships(rType);
-			for (Relationship relationship: relationships) {
-				returnList.add(relationship.getOtherNode(sourceNode));
-			}
-			tx.success();
-		}
-		return returnList;
 	}
 }
