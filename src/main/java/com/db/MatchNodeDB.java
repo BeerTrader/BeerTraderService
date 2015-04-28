@@ -9,9 +9,12 @@ import org.neo4j.graphdb.Transaction;
 
 import com.factory.LabelFactory;
 import com.factory.RelationshipTypeFactory;
+import com.geo.SimpleDistance;
 import com.objects.domain.MatchNode;
 
 public class MatchNodeDB {
+	final static double MAX_DISTANCE = 5;
+	
 	public static List<MatchNode> getPendingMatches(Node userNode) {
 		List<MatchNode> returnList = new ArrayList<>();
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
@@ -57,8 +60,10 @@ public class MatchNodeDB {
 						List<Node> offerers = getOfferers(tradingEntity);
 						for (Node offerer: offerers) {
 							if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
-								MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
-								returnList.add(m);
+								if (matchInRange(userNode,offerer)) {
+									MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
+									returnList.add(m);
+								}
 							}
 						}
 					}
@@ -70,8 +75,10 @@ public class MatchNodeDB {
 							List<Node> offerers = getOfferers(relatedTradingEntity);
 							for (Node offerer: offerers) {
 								if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
-									MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
-									returnList.add(m);
+									if (matchInRange(userNode,offerer)) {
+										MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
+										returnList.add(m);
+									}
 								}
 							}
 						}
@@ -131,6 +138,19 @@ public class MatchNodeDB {
 				if (matchNode.getDesirer().equals(desirerMatch)) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+	
+	private static boolean matchInRange(Node userNodeA, Node userNodeB) {
+		if (userNodeA.hasProperty("latitude")&&userNodeA.hasProperty("longitude")&&userNodeB.hasProperty("latitude")&&userNodeB.hasProperty("longitude")) {
+			double latA = Double.parseDouble(userNodeA.getProperty("latitude").toString());
+			double lonA = Double.parseDouble(userNodeA.getProperty("longitude").toString());
+			double latB = Double.parseDouble(userNodeB.getProperty("latitude").toString());
+			double lonB = Double.parseDouble(userNodeB.getProperty("longitude").toString());
+			if (SimpleDistance.haversine(latA, lonA, latB, lonB) <= MAX_DISTANCE) {
+				return true;
 			}
 		}
 		return false;

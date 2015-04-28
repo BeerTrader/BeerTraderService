@@ -44,6 +44,6 @@ public class UserDBTest extends AbstractDBTest {
 	
 	@Test(expected=DuplicateUserException.class)
 	public void registerUserFailureTest() throws DuplicateUserException {
-		UserDB.registerUser(testUsername, testPassword, 41.8369, 87.6847);
+		UserDB.registerUser(testUsername, testPassword, 41.8369, 87.6847, "dummy");
 	}
 }
