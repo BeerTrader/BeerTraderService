@@ -46,7 +46,7 @@ public class UserResource {
     public Response createUser(String user) {
     	try {
 			User newUser = (User) ObjectManager.readObjectAsString(user, User.class);
-			UserDB.registerUser(newUser.getUsername(), newUser.getPassword());
+			UserDB.registerUser(newUser.getUsername(), newUser.getPassword(), newUser.getLatitude(), newUser.getLongitude(), newUser.getToken());
 			String result = "User created with username: " + newUser.getUsername();
 			return Response.status(200).entity(result).build();
     	} catch(DuplicateUserException | ObjectMappingException e) {

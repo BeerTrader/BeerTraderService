@@ -26,7 +26,7 @@ public class MatchDB {
 		MatchList returnList = new MatchList();
 		
 		for (MatchNode mNode: mList) {
-			User u = UserDB.convertToUser(mNode.getOfferer());
+			User u = UserDB.convertToSecureUser(mNode.getOfferer());
 			TradingEntity offerable = TradingEntityDB.convertToTradingEntity(mNode.getOfferable());
 			TradingEntity desirable = TradingEntityDB.convertToTradingEntity(mNode.getDesirable());
 			Match m = new Match(mNode.getId(),u,offerable,desirable);

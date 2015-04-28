@@ -32,7 +32,8 @@ public class UserDB {
 		if (UserDB.userExists(username)) {
 			try (Transaction tx = DataManager.getInstance().beginTx()) {
 				Node userNode = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", username).iterator().next();
-				User user = new User(userNode.getId(),(String) userNode.getProperty("username"), (String) userNode.getProperty("password"));
+				//User user = new User(userNode.getId(),(String) userNode.getProperty("username"), (String) userNode.getProperty("password"));
+				User user = convertToUser(userNode);
 				tx.success();
 				return user;
 			}
@@ -61,7 +62,6 @@ public class UserDB {
 		} catch (UserNotFoundException e) {
 			throw new UserNotAuthorizedException(username);
 		}
-		
 		if (StringUtils.equals(authorizedUser.getPassword(), password)) {
 			return authorizedUser;
 		} else {
@@ -69,7 +69,7 @@ public class UserDB {
 		}
 	}	
 	
-	public static void registerUser(String username, String password) throws DuplicateUserException {
+	public static void registerUser(String username, String password, double latitude, double longitude, String token) throws DuplicateUserException {
 		if (UserDB.userExists(username)) {
 			throw new DuplicateUserException(username);
 		}
@@ -78,15 +78,26 @@ public class UserDB {
 			Node newUserNode = DBHelper.createNodeWithUniqueId(LabelFactory.getLabel("USER"));
 			newUserNode.setProperty("username", username);
 			newUserNode.setProperty("password", password);
+			newUserNode.setProperty("latitude", latitude);
+			newUserNode.setProperty("longitude", longitude);
+			newUserNode.setProperty("token", token);
 			tx.success();
 		}
 	}
 	
 	public static User convertToUser(Node userNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), null);
+			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), userNode.getProperty("password").toString(), Double.parseDouble(userNode.getProperty("latitude").toString()), Double.parseDouble(userNode.getProperty("longitude").toString()), userNode.getProperty("token").toString());
 			tx.success();
 			return u;
 		}
 	}
+	
+	public static User convertToSecureUser(Node userNode) {
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), null, 0.0, 0.0, null);
+			tx.success();
+			return u;
+		}
+	}	
 }
