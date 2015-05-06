@@ -17,7 +17,7 @@ public abstract class AbstractDBTest {
 	    DataManager.initTestDatabase();
 		
 	    try {
-			UserDB.registerUser(testUsername, testPassword, 41.8369, 87.6847, "dummy");
+			UserDB.registerUser(testUsername, testPassword, 41.8369, 87.6847);
 		} catch (DuplicateUserException e) {
 			e.printStackTrace();
 		}

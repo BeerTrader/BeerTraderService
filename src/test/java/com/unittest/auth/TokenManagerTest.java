@@ -17,8 +17,8 @@ public class TokenManagerTest {
 	
 	@BeforeClass
 	public static void initTokenManager() {
-	    u = new User(1,"usernameTest","passwordTest",41.8369,87.6847, "dummy");
-	    v = new User(2,"usernameTest2","passwordTest",41.8369,87.6847, "dummy");
+	    u = new User(1,"usernameTest","passwordTest",41.8369,87.6847);
+	    v = new User(2,"usernameTest2","passwordTest",41.8369,87.6847);
 	    
 	    uToken = TokenManager.getNewToken(u.getUsername());
 	    vToken = TokenManager.getNewToken(v.getUsername());

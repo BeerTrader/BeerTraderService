@@ -69,7 +69,7 @@ public class UserDB {
 		}
 	}	
 	
-	public static void registerUser(String username, String password, double latitude, double longitude, String token) throws DuplicateUserException {
+	public static void registerUser(String username, String password, double latitude, double longitude) throws DuplicateUserException {
 		if (UserDB.userExists(username)) {
 			throw new DuplicateUserException(username);
 		}
@@ -80,14 +80,13 @@ public class UserDB {
 			newUserNode.setProperty("password", password);
 			newUserNode.setProperty("latitude", latitude);
 			newUserNode.setProperty("longitude", longitude);
-			newUserNode.setProperty("token", token);
 			tx.success();
 		}
 	}
 	
 	public static User convertToUser(Node userNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), userNode.getProperty("password").toString(), Double.parseDouble(userNode.getProperty("latitude").toString()), Double.parseDouble(userNode.getProperty("longitude").toString()), userNode.getProperty("token").toString());
+			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), userNode.getProperty("password").toString(), Double.parseDouble(userNode.getProperty("latitude").toString()), Double.parseDouble(userNode.getProperty("longitude").toString()));
 			tx.success();
 			return u;
 		}
@@ -95,7 +94,7 @@ public class UserDB {
 	
 	public static User convertToSecureUser(Node userNode) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), null, 0.0, 0.0, null);
+			User u = new User(Long.parseLong(userNode.getProperty("id").toString()), userNode.getProperty("username").toString(), null, 0.0, 0.0);
 			tx.success();
 			return u;
 		}
