@@ -15,7 +15,6 @@ public class UserDBTest extends AbstractDBTest {
 	@Test
 	public void userExistsTest() {
 		boolean result = UserDB.userExists(testUsername);
-		System.out.println(result);
 		assertTrue(result);
 	}
 	
