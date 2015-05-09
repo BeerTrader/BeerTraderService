@@ -1,5 +1,11 @@
 package com.service;
 
+import ibt.ortc.api.InvalidBalancerServerException;
+import ibt.ortc.api.OrtcAuthenticationNotAuthorizedException;
+
+import java.io.IOException;
+import java.util.GregorianCalendar;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,6 +24,7 @@ import com.exceptions.ObjectMappingException;
 import com.exceptions.UserNotFoundException;
 import com.objects.domain.Match;
 import com.objects.domain.MatchList;
+import com.objects.domain.SimpleMessaging;
 import com.objects.mapping.ObjectManager;
 
 @Path("/match")
@@ -37,7 +44,6 @@ public class MatchResource {
 		}
     }
 
-    //TODO Should return chat token of other user
     @POST
     @Path("/acceptMatch")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -47,9 +53,13 @@ public class MatchResource {
     		Node userNode = UserDB.getUserNode(auth);
     		Match match = (Match) ObjectManager.readObjectAsString(matchJson, Match.class);
     		MatchDB.acceptMatch(userNode, match);
-    		return Response.status(200).entity("Match accepted between user node " + userNode.getId() + " and match node " + match.getId()).build();
+    		String channelName = new Long(match.getId()).toString();
+    		String realtimeAuthenticationToken = new Long(GregorianCalendar.getInstance().getTimeInMillis()).toString();
+    		SimpleMessaging realtimeAuthentication = new SimpleMessaging(channelName,realtimeAuthenticationToken);
+    		realtimeAuthentication.realtimeAuthenticate();
+    		return Response.status(200).entity(ObjectManager.writeObjectAsString(realtimeAuthentication)).build();
     	}
-    	catch (ObjectMappingException | UserNotFoundException | NotFoundException e) {
+    	catch (ObjectMappingException | UserNotFoundException | NotFoundException | IOException | InvalidBalancerServerException | OrtcAuthenticationNotAuthorizedException e) {
 	    	System.out.println(e.getMessage());
 	    	return Response.status(400).entity(e.getMessage()).build();
 		}
