@@ -53,8 +53,8 @@ public class MatchResource {
     		Node userNode = UserDB.getUserNode(auth);
     		Match match = (Match) ObjectManager.readObjectAsString(matchJson, Match.class);
     		MatchDB.acceptMatch(userNode, match);
-    		String channelName = new Long(match.getId()).toString();
-    		String realtimeAuthenticationToken = new Long(GregorianCalendar.getInstance().getTimeInMillis()).toString();
+    		String channelName = Long.toString(match.getId());
+    		String realtimeAuthenticationToken = Long.toString(GregorianCalendar.getInstance().getTimeInMillis());
     		SimpleMessaging realtimeAuthentication = new SimpleMessaging(channelName,realtimeAuthenticationToken);
     		realtimeAuthentication.realtimeAuthenticate();
     		return Response.status(200).entity(ObjectManager.writeObjectAsString(realtimeAuthentication)).build();

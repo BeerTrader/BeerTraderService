@@ -6,10 +6,12 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 public class RelationshipTypeDB {
-	public static boolean hasRelationship(Node source, Node destination, RelationshipType relation) {
+    private RelationshipTypeDB() {};	
+	
+	public static boolean hasRelationship(Node source, Node destination, RelationshipType... relations) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
-			Iterable<Relationship> relations = source.getRelationships(relation);
-			for (Relationship currentRelation: relations) {
+			Iterable<Relationship> allRelations = source.getRelationships(relations);
+			for (Relationship currentRelation: allRelations) {
 				if (currentRelation.getOtherNode(source).equals(destination)) {
 					return true;
 				}

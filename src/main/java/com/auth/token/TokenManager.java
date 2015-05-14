@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.objects.domain.User;
 
 public class TokenManager {
+    private TokenManager() {};
 	
 	private static HashMap<String,User> tokenCollection = new HashMap<>();
 	private static TokenGenerator tokenGenerator = new BasicTokenGenerator();

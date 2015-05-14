@@ -12,7 +12,9 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 public class DBHelper {
-	public static Node getFirstNodeOfRelationshipType(Node sourceNode, RelationshipType rType) {
+    private DBHelper() {};
+    
+	public static Node getFirstNodeOfRelationshipType(Node sourceNode, RelationshipType... rType) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Node firstRelationshipNode = sourceNode.getRelationships(rType).iterator().next().getOtherNode(sourceNode);
 			tx.success();
@@ -20,7 +22,7 @@ public class DBHelper {
 		}
 	}
 
-	public static List<Node> getNodesOfRelationshipType(Node sourceNode, RelationshipType rType) {
+	public static List<Node> getNodesOfRelationshipType(Node sourceNode, RelationshipType... rType) {
 		List<Node> returnList = new ArrayList<>();
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Iterable<Relationship> relationships = sourceNode.getRelationships(rType);
@@ -32,7 +34,7 @@ public class DBHelper {
 		return returnList;
 	}
 	
-	public static Relationship getRelationship(Node sourceNode, Node destinationNode, RelationshipType rType) throws NotFoundException {
+	public static Relationship getRelationship(Node sourceNode, Node destinationNode, RelationshipType... rType) throws NotFoundException {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			Iterable<Relationship> relationships = sourceNode.getRelationships(rType);
 			for (Relationship rel: relationships) {
@@ -41,8 +43,7 @@ public class DBHelper {
 					return rel;
 				}
 			}
-			System.out.println("Could not find relationship of type " + rType.name() + " between " + sourceNode.getId() + " and " + destinationNode.getId());
-			throw new NotFoundException("Could not find relationship of type " + rType.name() + " between " + sourceNode.getId() + " and " + destinationNode.getId());
+			throw new NotFoundException("Could not find relationship of specified type between " + sourceNode.getId() + " and " + destinationNode.getId());
 		}
 	}
 	

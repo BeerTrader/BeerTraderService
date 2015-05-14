@@ -41,7 +41,7 @@ public class OfferableResource {
 					Label relatedTradingEntityLabel = LabelFactory.getLabel(relatedTradingEntity.getLabel());
 					Node relatedTradingEntityNode = TradingEntityDB.getOrCreateTradingEntity(relatedTradingEntity.getName(), LabelFactory.getLabel(relatedTradingEntity.getLabel()));
 					RelationshipType newRelation = RelationshipTypeFactory.getRelationshipType(tradingEntityLabel, relatedTradingEntityLabel);
-;					RelationshipTypeDB.addRelationshipBetweenNodes(tradingEntityNode, relatedTradingEntityNode, newRelation);
+					RelationshipTypeDB.addRelationshipBetweenNodes(tradingEntityNode, relatedTradingEntityNode, newRelation);
 				}
 			}			
 			return Response.status(200).entity(newTradingEntity.getName()).build();

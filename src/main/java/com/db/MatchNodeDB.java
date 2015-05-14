@@ -13,6 +13,8 @@ import com.geo.SimpleDistance;
 import com.objects.domain.MatchNode;
 
 public class MatchNodeDB {
+    private MatchNodeDB() {};
+    
 	final static double MAX_DISTANCE = 5;
 	
 	public static List<MatchNode> getPendingMatches(Node userNode) {
@@ -61,8 +63,10 @@ public class MatchNodeDB {
 						for (Node offerer: offerers) {
 							if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
 								if (matchInRange(userNode,offerer)) {
-									MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
-									returnList.add(m);
+									if (alreadyMatched(userNode,offerer,tradingEntity)==false) {
+										MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
+										returnList.add(m);
+									}
 								}
 							}
 						}
@@ -76,8 +80,10 @@ public class MatchNodeDB {
 							for (Node offerer: offerers) {
 								if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
 									if (matchInRange(userNode,offerer)) {
-										MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
-										returnList.add(m);
+										if (alreadyMatched(userNode,offerer,tradingEntity)==false) {
+											MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
+											returnList.add(m);
+										}
 									}
 								}
 							}
@@ -116,8 +122,9 @@ public class MatchNodeDB {
 	
 	private static boolean userInList(String username, List<MatchNode> list) {
 		for (MatchNode m: list) {
-			if (m.getOfferer().getProperty("username").toString().equals(username))
+			if (m.getOfferer().getProperty("username").toString().equals(username)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -140,6 +147,50 @@ public class MatchNodeDB {
 				}
 			}
 		}
+		return false;
+	}
+	
+	private static boolean alreadyMatched(Node userNode, Node otherUser, Node tradingEntity) {
+		//Check if user has been matched as a desirer of something from someone
+		List<Node> desiredMatches = DBHelper.getNodesOfRelationshipType(userNode, RelationshipTypeFactory.desirerRelations);
+		for (Node m: desiredMatches) {
+			if (tradingEntity.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.matchRelations))) {
+				if (otherUser.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.offererRelations))) {
+					return true;
+				}
+			}
+		}
+		
+		//Check if user has been matched as an offerer of something from someone
+		List<Node> offererMatches = DBHelper.getNodesOfRelationshipType(userNode, RelationshipTypeFactory.offererRelations);
+		for (Node m: offererMatches) {
+			if (tradingEntity.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.matchRelations))) {
+				if (otherUser.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.desirerRelations))) {
+					return true;
+				}
+			}
+		}
+		/*
+		//Check if user has been matched as a desirer of something from someone
+		List<Node> desiredMatches = DBHelper.getNodesOfRelationshipType(userNode, RelationshipTypeFactory.getRelationshipType("ACCEPT_DESIRER"), RelationshipTypeFactory.getRelationshipType("REJECT_DESIRER"), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+		for (Node m: desiredMatches) {
+			if (tradingEntity.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"), RelationshipTypeFactory.getRelationshipType("MATCH_OFFER")))) {
+				if (otherUser.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.getRelationshipType("ACCEPT_OFFERER"), RelationshipTypeFactory.getRelationshipType("REJECT_OFFERER"), RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER")))) {
+					return true;
+				}
+			}
+		}
+		
+		//Check if user has been matched as an offerer of something from someone
+		List<Node> offererMatches = DBHelper.getNodesOfRelationshipType(userNode, RelationshipTypeFactory.getRelationshipType("ACCEPT_OFFERER"), RelationshipTypeFactory.getRelationshipType("REJECT_OFFERER"), RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+		for (Node m: offererMatches) {
+			if (tradingEntity.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"), RelationshipTypeFactory.getRelationshipType("MATCH_OFFER")))) {
+				if (otherUser.equals(DBHelper.getFirstNodeOfRelationshipType(m, RelationshipTypeFactory.getRelationshipType("ACCEPT_DESIRER"), RelationshipTypeFactory.getRelationshipType("REJECT_DESIRER"), RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER")))) {
+					return true;
+				}
+			}
+		}
+		*/		
 		return false;
 	}
 	

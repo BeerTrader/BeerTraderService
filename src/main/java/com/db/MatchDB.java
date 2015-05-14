@@ -17,6 +17,8 @@ import com.objects.domain.TradingEntity;
 import com.objects.domain.User;
 
 public class MatchDB {
+    private MatchDB() {};
+    
 	public static MatchList getUnrespondedMatches(Node userNode) {
 		//Get unresponded matches and convert to MatchList
 		return convertToMatchList(MatchNodeDB.getPendingMatches(userNode));
@@ -36,8 +38,8 @@ public class MatchDB {
 		return returnList;
 	}
 	
-	//TODO Be able to handle PENDING_OFFERER requests as well
-	//TODO Add statuses for ACCEPT_DESIRER, ACCEPT_OFFERER?	
+	//TODO Be able to handle PENDING_OFFERER requests as well	
+	//TODO If relationship exists, do not delete and re-add (???Necessary for course???)
 	public static void acceptMatch(Node userNode, Match match) throws NotFoundException {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			ResourceIterator<Node> matchIterator = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.getLabel("MATCH"), "id", match.getId()).iterator();
@@ -45,7 +47,7 @@ public class MatchDB {
 				Node matchNode = matchIterator.next();
 				Relationship r = DBHelper.getRelationship(userNode, matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 				r.delete();
-				matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("ACCEPT"));
+				matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("ACCEPT_DESIRER"));
 			} else {
 				throw new NotFoundException("Match node with Id " + match.getId() + " not found");
 			}
@@ -54,7 +56,6 @@ public class MatchDB {
 	}
 
 	//TODO Be able to handle PENDING_OFFERER requests as well
-	//TODO Add statuses for REJECT_DESIRER, REJECT_OFFERER?
 	public static void rejectMatch(Node userNode, Match match) throws NotFoundException {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			ResourceIterator<Node> matchIterator = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.getLabel("MATCH"), "id", match.getId()).iterator();
@@ -62,7 +63,7 @@ public class MatchDB {
 				Node matchNode = matchIterator.next();
 				Relationship r = DBHelper.getRelationship(userNode, matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
 				r.delete();
-				matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("REJECT"));
+				matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("REJECT_DESIRER"));
 			} else {
 				throw new NotFoundException("Match node with Id " + match.getId() + " not found");
 			}

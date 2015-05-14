@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.exceptions.ObjectMappingException;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.objects.mapping.ObjectManager;
-
 import ibt.ortc.api.ChannelPermissions;
 import ibt.ortc.api.InvalidBalancerServerException;
 import ibt.ortc.api.Ortc;
