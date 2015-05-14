@@ -38,7 +38,8 @@ public class MatchDB {
 		return returnList;
 	}
 	
-	//TODO Be able to handle PENDING_OFFERER requests as well	
+	//TODO Be able to handle PENDING_OFFERER requests as well
+	//TODO Check ACCEPT_DESIRER, REJECT_DESIRER as well as PENDING_DESIRER/Allows for acceptMatch to be called more than once
 	//TODO If relationship exists, do not delete and re-add (???Necessary for course???)
 	public static void acceptMatch(Node userNode, Match match) throws NotFoundException {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
