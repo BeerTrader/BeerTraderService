@@ -9,6 +9,7 @@ import org.neo4j.graphdb.Transaction;
 import com.objects.domain.TradingEntity;
 
 public class TradingEntityDB {
+    private TradingEntityDB() {};
 	
 	public static boolean entityExists(String name, Label label) {
 		if (StringUtils.isEmpty(name)) {

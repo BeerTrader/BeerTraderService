@@ -4,8 +4,13 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 public class RelationshipTypeFactory {
-	public enum BeerRelationships implements RelationshipType { IS_A, MADE_BY, DESIRES, OFFERS, PENDING_DESIRER, PENDING_OFFERER, ACCEPT, REJECT, MATCH_OFFER, MATCH_DESIRE, ERROR; } 
-	
+	public enum BeerRelationships implements RelationshipType { IS_A, MADE_BY, DESIRES, OFFERS, PENDING_DESIRER, PENDING_OFFERER, ACCEPT_OFFERER, ACCEPT_DESIRER, REJECT_OFFERER, REJECT_DESIRER, MATCH_OFFER, MATCH_DESIRE, ERROR; }
+	public static final RelationshipType[] matchRelations = {BeerRelationships.MATCH_OFFER,BeerRelationships.MATCH_DESIRE};
+	public static final RelationshipType[] offererRelations = {BeerRelationships.PENDING_OFFERER,BeerRelationships.ACCEPT_OFFERER,BeerRelationships.REJECT_OFFERER};
+	public static final RelationshipType[] desirerRelations = {BeerRelationships.PENDING_DESIRER,BeerRelationships.ACCEPT_DESIRER,BeerRelationships.REJECT_DESIRER};
+
+    private RelationshipTypeFactory() {};
+    
 	public static RelationshipType getRelationshipType(String relationshipName) {
 		for (RelationshipType r: BeerRelationships.values()) {
 			if (r.name().equalsIgnoreCase(relationshipName)) {

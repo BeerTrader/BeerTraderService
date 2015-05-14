@@ -13,7 +13,8 @@ import com.factory.LabelFactory;
 import com.objects.domain.User;
 
 public class UserDB {
-	
+    private UserDB() {};
+    
 	public static boolean userExists(String username) {
 		if (StringUtils.isEmpty(username)) {
 			return false;
@@ -32,7 +33,6 @@ public class UserDB {
 		if (UserDB.userExists(username)) {
 			try (Transaction tx = DataManager.getInstance().beginTx()) {
 				Node userNode = DataManager.getInstance().findNodesByLabelAndProperty(LabelFactory.BeerLabels.USER, "username", username).iterator().next();
-				//User user = new User(userNode.getId(),(String) userNode.getProperty("username"), (String) userNode.getProperty("password"));
 				User user = convertToUser(userNode);
 				tx.success();
 				return user;

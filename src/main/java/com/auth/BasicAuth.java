@@ -4,15 +4,13 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.glassfish.jersey.internal.util.Base64;
 
-//import com.sun.jersey.core.util.Base64;
-
-
 /**
  * Allow to encode/decode the authentification
  * @author Deisss (LGPLv3)
  * Implementation taken from https://simplapi.wordpress.com/2013/01/24/jersey-jax-rs-implements-a-http-basic-auth-decoder/
  */
 public class BasicAuth {
+    private BasicAuth() {};
     /**
      * Decode the basic auth and convert it to array login/password
      * @param auth The string encoded authentification
@@ -37,12 +35,10 @@ public class BasicAuth {
     }
     
     public static String decodeToken(String auth) {
-    	//return Base64.base64Decode(auth);
     	return Base64.decodeAsString(auth);
     }
     
     public static String encodeToken(String token) {
-    	//return new String(Base64.encode(token));
     	return Base64.encodeAsString(token);
     }
 }
