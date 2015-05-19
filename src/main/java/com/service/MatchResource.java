@@ -43,6 +43,21 @@ public class MatchResource {
 	    	return Response.status(400).entity(e.getMessage()).build();
 		}
     }
+    
+    @GET
+    @Path("/getPendingOffererMatches")
+    public Response getPendingOffererMatches(@Context HttpHeaders headers) {
+    	String auth = headers.getRequestHeaders().getFirst("authorization");
+		try {
+	    	Node userNode = UserDB.getUserNode(auth);
+			MatchList newMatches = MatchDB.getPendingOffererMatches(userNode);
+			String results = ObjectManager.writeObjectAsString(newMatches);
+			return Response.status(200).entity(results).build();
+		} catch (ObjectMappingException | UserNotFoundException e) {
+	    	System.out.println(e.getMessage());
+	    	return Response.status(400).entity(e.getMessage()).build();
+		}
+    }    
 
     @POST
     @Path("/acceptMatch")

@@ -7,6 +7,8 @@ public class Match {
 	private long id;
 	@JsonProperty("offerer")
 	private User offerer;
+	@JsonProperty("desirer")
+	private User desirer;
 	@JsonProperty("offerable")
 	private TradingEntity offerable;
 	@JsonProperty("desirable")
@@ -15,9 +17,10 @@ public class Match {
 	public Match() {
 	}
 	
-	public Match(long id, User offerer, TradingEntity offerable, TradingEntity desirable) {
+	public Match(long id, User offerer, User desirer, TradingEntity offerable, TradingEntity desirable) {
 		this.id = id;
 		this.offerer = offerer;
+		this.desirer = desirer;
 		this.offerable = offerable;
 		this.desirable = desirable;
 	}
@@ -30,6 +33,10 @@ public class Match {
 		return offerer;
 	}
 
+	public User getDesirer() {
+		return desirer;
+	}
+	
 	public TradingEntity getOfferable() {
 		return offerable;
 	}
@@ -40,6 +47,6 @@ public class Match {
 
 	@Override
 	public String toString() {
-		return "Match [id=" + id + "offerer=" + offerer + ", offerable=" + offerable + ", desirable=" + desirable + "]";
+		return "Match [id=" + id + "offerer=" + offerer + ", desirer=" + desirer + ", offerable=" + offerable + ", desirable=" + desirable + "]";
 	}
 }
