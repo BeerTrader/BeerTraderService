@@ -13,9 +13,11 @@ public class RelationshipTypeDB {
 			Iterable<Relationship> allRelations = source.getRelationships(relations);
 			for (Relationship currentRelation: allRelations) {
 				if (currentRelation.getOtherNode(source).equals(destination)) {
+					tx.success();
 					return true;
 				}
 			}
+			tx.success();
 			return false;
 		}
 	}

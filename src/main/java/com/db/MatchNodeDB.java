@@ -95,6 +95,18 @@ public class MatchNodeDB {
 		}
 		return returnList;
 	}
+	
+	public static List<MatchNode> getPendingOffererRequests(Node userNode) {
+		List<MatchNode> returnList = new ArrayList<>();
+		try (Transaction tx = DataManager.getInstance().beginTx()) {
+			Iterable<Relationship> pendingRelationships = userNode.getRelationships(RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
+			for (Relationship r: pendingRelationships) {
+				Node matchNode = r.getOtherNode(userNode);
+				returnList.add(getMatchNode(matchNode));
+			}
+		}
+		return returnList;
+	}
 
 	private static List<Node> getOfferers(Node tradingEntity) {
 		List<Node> offerers = new ArrayList<>();
@@ -130,8 +142,8 @@ public class MatchNodeDB {
 	}
 	
 	private static MatchNode getMatchNode(Node matchNode) {
-		Node offerer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
-		Node desirer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_DESIRER"));
+		Node offerer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.offererRelations);
+		Node desirer = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.desirerRelations);
 		Node desirable = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_OFFER"));
 		Node offerable = DBHelper.getFirstNodeOfRelationshipType(matchNode, RelationshipTypeFactory.getRelationshipType("MATCH_DESIRE"));
 		return new MatchNode(Long.parseLong(matchNode.getProperty("id").toString()),offerer,desirer,offerable,desirable);
