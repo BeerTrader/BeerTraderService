@@ -17,7 +17,8 @@ import com.objects.domain.TradingEntity;
 import com.objects.domain.User;
 
 public class MatchDB {
-    private MatchDB() {};
+    private MatchDB() {
+    };
     
 	public static MatchList getUnrespondedMatches(Node userNode) {
 		//Get unresponded matches and convert to MatchList
@@ -58,8 +59,7 @@ public class MatchDB {
 					Relationship r = DBHelper.getRelationship(userNode, matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
 					r.delete();
 					matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("ACCEPT_OFFERER"));
-				}
-				else {
+				} else {
 					throw new NotFoundException("Relationship between " + match.getId() + " and " + matchNode.getId() + " not found");
 				}
 			} else {
@@ -82,8 +82,7 @@ public class MatchDB {
 					Relationship r = DBHelper.getRelationship(userNode, matchNode, RelationshipTypeFactory.getRelationshipType("PENDING_OFFERER"));
 					r.delete();
 					matchNode.createRelationshipTo(userNode, RelationshipTypeFactory.getRelationshipType("REJECT_OFFERER"));
-				}
-				else {
+				} else {
 					throw new NotFoundException("Relationship between " + match.getId() + " and " + matchNode.getId() + " not found");
 				}				
 			} else {

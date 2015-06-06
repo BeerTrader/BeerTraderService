@@ -13,7 +13,8 @@ import com.geo.SimpleDistance;
 import com.objects.domain.MatchNode;
 
 public class MatchNodeDB {
-    private MatchNodeDB() {};
+    private MatchNodeDB() {
+    };
     
 	final static double MAX_DISTANCE = 5;
 	
@@ -29,20 +30,21 @@ public class MatchNodeDB {
 				List<MatchNode> newMatches = findNewMatches(userNode);
 				for (MatchNode newMatch: newMatches) {
 					if (returnList.size()<25) {
-						if (matchExists(newMatch)==false) {
+						//System.out.println(returnList.size());
+						//if (!matchExists(newMatch)) {
+							//System.out.println("Match Exists?");
 							addMatch(newMatch);
 							returnList.add(newMatch);
-						}
-					}
-					else {
+						//}
+					} else {
 						break;
 					}
 				}
 			}
 			tx.success();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		return returnList;
 	}
@@ -61,26 +63,25 @@ public class MatchNodeDB {
 					if (tradingEntity.hasLabel(LabelFactory.getLabel("BEER"))) {
 						List<Node> offerers = getOfferers(tradingEntity);
 						for (Node offerer: offerers) {
-							if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
+							if (!userInList(offerer.getProperty("username").toString(),returnList)) {
 								if (matchInRange(userNode,offerer)) {
-									if (alreadyMatched(userNode,offerer,tradingEntity)==false) {
+									if (!alreadyMatched(userNode,offerer,tradingEntity)) {
 										MatchNode m = new MatchNode(offerer,userNode,tradingEntity,tradingEntity);
 										returnList.add(m);
 									}
 								}
 							}
 						}
-					}
-					else {
+					} else {
 						//if other tradingEntity, find users who offer beers of those entities
 						Iterable<Relationship> relatedEntityRelationships = tradingEntity.getRelationships(RelationshipTypeFactory.getRelationshipType("IS_A"), RelationshipTypeFactory.getRelationshipType("MADE_BY"));
 						for (Relationship relatedEntityRelationship: relatedEntityRelationships) {
 							Node relatedTradingEntity = relatedEntityRelationship.getOtherNode(tradingEntity);
 							List<Node> offerers = getOfferers(relatedTradingEntity);
 							for (Node offerer: offerers) {
-								if (userInList(offerer.getProperty("username").toString(),returnList)==false) {
+								if (!userInList(offerer.getProperty("username").toString(),returnList)) {
 									if (matchInRange(userNode,offerer)) {
-										if (alreadyMatched(userNode,offerer,tradingEntity)==false) {
+										if (!alreadyMatched(userNode,offerer,tradingEntity)) {
 											MatchNode m = new MatchNode(offerer,userNode,relatedTradingEntity,tradingEntity);
 											returnList.add(m);
 										}

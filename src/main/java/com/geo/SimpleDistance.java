@@ -7,7 +7,8 @@ public class SimpleDistance {
     public static final double R = 3958.75; //Miles
     //public static final double R = 20902200; //Feet
     
-    private SimpleDistance() {};
+    private SimpleDistance() {
+    };
     
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);

@@ -6,7 +6,8 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 public class RelationshipTypeDB {
-    private RelationshipTypeDB() {};	
+    private RelationshipTypeDB() {
+    };	
 	
 	public static boolean hasRelationship(Node source, Node destination, RelationshipType... relations) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {

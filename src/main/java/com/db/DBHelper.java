@@ -12,7 +12,8 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 public class DBHelper {
-    private DBHelper() {};
+    private DBHelper() {
+    };
     
 	public static Node getFirstNodeOfRelationshipType(Node sourceNode, RelationshipType... rType) {
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
@@ -48,7 +49,7 @@ public class DBHelper {
 	}
 	
 	public static Node createNodeWithUniqueId(Label nodeLabel) {
-		Node returnNode;
+		Node returnNode = null;
 		try (Transaction tx = DataManager.getInstance().beginTx()) {
 			if (nodeLabel==null) {
 				returnNode = DataManager.getInstance().createNode();
@@ -56,8 +57,12 @@ public class DBHelper {
 				returnNode = DataManager.getInstance().createNode(nodeLabel);
 			}
 			long id = GregorianCalendar.getInstance().getTimeInMillis();
+			Thread.sleep(5);
 			returnNode.setProperty("id", id);
 			tx.success();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return returnNode;
 	}
